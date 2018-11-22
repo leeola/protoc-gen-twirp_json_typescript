@@ -1,0 +1,12 @@
+syntax = "proto3";
+package example_001;
+option go_package = "example_001";
+
+enum Bar {
+  UNKNOWN = 0;
+  BAR_FOO = 1;
+}
+
+message Foo {
+  string field_a = 1;
+}

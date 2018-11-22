@@ -1,0 +1,9 @@
+syntax = "proto3";
+package example_002;
+
+import "example_001.proto";
+import "dir/example_003.proto";
+
+message Foo {
+  example_001.Bar bar = 1;
+}
