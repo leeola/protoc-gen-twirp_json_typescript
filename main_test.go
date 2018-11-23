@@ -74,15 +74,18 @@ func TestTypescript(t *testing.T) {
 
 		t.Logf("testing tmp %q, proto %q", tmpDir, protoPath)
 
-		if err := buildPlugin(tmpDir); err != nil {
+		pluginPath := filepath.Join(tmpDir, fmt.Sprintf("protoc-gen-%s", pluginName))
+		if err := buildPlugin(pluginPath); err != nil {
 			t.Fatalf("buildPlugin: %v", err)
 		}
 
-		if err := compileProto(t, tmpDir, protoPath); err != nil {
+		tsDir := filepath.Join("_example_typescript", alphaNumReg.ReplaceAllString(protoPath, "_"))
+		if err := compileProto(t, pluginPath, protoPath, tsDir); err != nil {
 			t.Fatalf("compileProto: %v", err)
 		}
 
-		if err := compileTypescript(tmpDir, protoPath); err != nil {
+		jsDir := filepath.Join(tmpDir, "javascript")
+		if err := compileTypescript(t, protoPath, tsDir, jsDir); err != nil {
 			t.Errorf("compileTypescript: %v", err)
 			return nil
 		}
@@ -106,25 +109,20 @@ func verifyReqs() error {
 	return nil
 }
 
-func buildPlugin(dst string) error {
-	cmd := exec.Command("go",
-		"build",
-		"-o", filepath.Join(dst, fmt.Sprintf("protoc-gen-%s", pluginName)),
-		".")
+func buildPlugin(pluginPath string) error {
+	cmd := exec.Command("go", "build", "-o", pluginPath, ".")
 	return cmd.Run()
 }
 
-func compileProto(t *testing.T, tmpDir, protoPath string) error {
-	outputDir := filepath.Join("_example_typescript", alphaNumReg.ReplaceAllString(protoPath, "_"))
-	if err := os.MkdirAll(outputDir, 0755); err != nil {
+func compileProto(t *testing.T, pluginPath, protoPath, tsDir string) error {
+	if err := os.MkdirAll(tsDir, 0755); err != nil {
 		return fmt.Errorf("MkdirAll: %v", err)
 	}
 
-	pluginPath := filepath.Join(tmpDir, fmt.Sprintf("protoc-gen-%s", pluginName))
 	cmd := exec.Command("protoc",
 		"--proto_path", "_example_proto",
 		fmt.Sprintf("--plugin=%s", pluginPath),
-		fmt.Sprintf("--%s_out=%s", pluginName, outputDir),
+		fmt.Sprintf("--%s_out=%s", pluginName, tsDir),
 		protoPath,
 	)
 
@@ -132,7 +130,7 @@ func compileProto(t *testing.T, tmpDir, protoPath string) error {
 	if err != nil {
 		fmt.Errorf("protoc StderrPipe: %v", err)
 	}
-	go logStderr(t, stderr)
+	go logReadCloser(t, "protoc stderr", stderr)
 
 	if pluginLog != "" {
 		cmd.Env = setEnv(os.Environ(), "TWIRP_JSON_TYPESCRIPT_LOG_FILE", "_tmp/plugin.log")
@@ -143,8 +141,19 @@ func compileProto(t *testing.T, tmpDir, protoPath string) error {
 	return cmd.Run()
 }
 
-func compileTypescript(dst, protoPath string) error {
-	return nil
+func compileTypescript(t *testing.T, protoPath, tsDir, jsDir string) error {
+	tsPath := filepath.Join(tsDir, strings.TrimSuffix(protoPath, ".proto")+".ts")
+	cmd := exec.Command("tsc",
+		"--outDir", jsDir,
+		tsPath)
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		fmt.Errorf("tsc StdoutPipe: %v", err)
+	}
+	go logReadCloser(t, "typescript compiler stdout", stdout)
+
+	return cmd.Run()
 }
 
 func setEnv(env []string, key, value string) []string {
@@ -168,15 +177,15 @@ func delEnv(env []string, key string) []string {
 	return env
 }
 
-func logStderr(t *testing.T, rc io.ReadCloser) {
+func logReadCloser(t *testing.T, logName string, rc io.ReadCloser) {
 	defer rc.Close()
 
 	scanner := bufio.NewScanner(rc)
 	for scanner.Scan() {
-		t.Logf("protoc stderr: %s", scanner.Text())
+		t.Logf("%s: %s", logName, scanner.Text())
 	}
 
 	if err := scanner.Err(); err != nil {
-		t.Fatalf("stderr scanner: %v", err)
+		t.Fatalf("%s scanner: %v", logName, err)
 	}
 }
