@@ -25,4 +25,9 @@ message Foo {
   // not supported yet
   // bytes foo_bytes       = 15;
   Bar bar = 16;
+  Baz baz = 17;
+}
+
+message Baz {
+  string baz = 1;
 }

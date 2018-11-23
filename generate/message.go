@@ -41,7 +41,8 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.Desc
 		case descriptor.FieldDescriptorProto_TYPE_BOOL:
 			tsType = "boolean"
 		// case descriptor.FieldDescriptorProto_TYPE_BYTES:
-		case descriptor.FieldDescriptorProto_TYPE_ENUM:
+		case descriptor.FieldDescriptorProto_TYPE_ENUM,
+			descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			typeName := f.GetTypeName()[1:] // remove . prefix
 			if strings.HasPrefix(typeName, packageName) {
 				typeName = strings.TrimPrefix(typeName, packageName+".")
