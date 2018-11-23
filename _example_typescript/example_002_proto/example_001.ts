@@ -24,4 +24,9 @@ export interface Foo {
   foo_string: string
   foo_bool: boolean
   bar: Bar
+  baz: Baz
+}
+
+export interface Baz {
+  baz: string
 }
