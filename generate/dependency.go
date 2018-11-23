@@ -8,7 +8,7 @@ import (
 
 func Dependency(w *Writer, depPath string) error {
 	depName := TSImportName(depPath)
-	_, err := w.Pf("import * as %s from \"%s\"\n", depName, TSExt(depPath))
+	_, err := w.Pf("import * as %s from \"./%s\"\n", depName, DropExt(depPath))
 	if err != nil {
 		return fmt.Errorf("Pf: %v", err)
 	}
