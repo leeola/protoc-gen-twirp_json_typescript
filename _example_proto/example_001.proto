@@ -24,4 +24,5 @@ message Foo {
   bool foo_bool         = 14;
   // not supported yet
   // bytes foo_bytes       = 15;
+  Bar bar = 16;
 }

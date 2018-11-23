@@ -22,7 +22,7 @@ func Message(w *Writer, m *descriptor.DescriptorProto) error {
 
 	for _, f := range m.GetField() {
 		var tsType string
-		switch f.GetType() {
+		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_INT32,
 			descriptor.FieldDescriptorProto_TYPE_INT64,
 			descriptor.FieldDescriptorProto_TYPE_UINT32,
@@ -42,7 +42,7 @@ func Message(w *Writer, m *descriptor.DescriptorProto) error {
 			tsType = "boolean"
 		// case descriptor.FieldDescriptorProto_TYPE_BYTES:
 		default:
-			tsType = "unknownwoo"
+			return fmt.Errorf("unhandled type: %v", t)
 		}
 
 		w.Pf("  %s: %s\n", f.GetName(), tsType)
