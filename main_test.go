@@ -130,7 +130,7 @@ func compileProto(t *testing.T, pluginPath, protoPath, tsDir string) error {
 	if err != nil {
 		fmt.Errorf("protoc StderrPipe: %v", err)
 	}
-	go logReadCloser(t, "protoc stderr", stderr)
+	go logReadCloser(t, "protoc", stderr)
 
 	if pluginLog != "" {
 		cmd.Env = setEnv(os.Environ(), "TWIRP_JSON_TYPESCRIPT_LOG_FILE", "_tmp/plugin.log")
@@ -151,7 +151,7 @@ func compileTypescript(t *testing.T, protoPath, tsDir, jsDir string) error {
 	if err != nil {
 		fmt.Errorf("tsc StdoutPipe: %v", err)
 	}
-	go logReadCloser(t, "typescript compiler stdout", stdout)
+	go logReadCloser(t, "tsc", stdout)
 
 	return cmd.Run()
 }
