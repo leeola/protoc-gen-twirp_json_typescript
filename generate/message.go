@@ -2,9 +2,9 @@ package generate
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
-	"github.com/rs/zerolog/log"
 )
 
 // optionalFields is a placeholder for a future protobuf option,
@@ -14,8 +14,8 @@ import (
 // TODO(leeola): convert this field to be supplied by a proto option.
 const optionalFields = true // default true for now, my pref
 
-func Message(w *Writer, m *descriptor.DescriptorProto) error {
-	log.Info().Msgf("message? %v", m)
+func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.DescriptorProto) error {
+	packageName := file.GetPackage()
 
 	w.P()
 	w.Pf("export interface %s {\n", m.GetName())
@@ -41,6 +41,12 @@ func Message(w *Writer, m *descriptor.DescriptorProto) error {
 		case descriptor.FieldDescriptorProto_TYPE_BOOL:
 			tsType = "boolean"
 		// case descriptor.FieldDescriptorProto_TYPE_BYTES:
+		case descriptor.FieldDescriptorProto_TYPE_ENUM:
+			typeName := f.GetTypeName()[1:] // remove . prefix
+			if strings.HasPrefix(typeName, packageName) {
+				typeName = strings.TrimPrefix(typeName, packageName+".")
+			}
+			tsType = typeName
 		default:
 			return fmt.Errorf("unhandled type: %v", t)
 		}

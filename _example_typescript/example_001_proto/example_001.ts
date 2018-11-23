@@ -3,6 +3,11 @@
 //
 
 
+export enum Bar {
+  UNKNOWN = 0,
+  BAR_FOO = 1,
+}
+
 export interface Foo {
   foo_int32: number
   foo_int64: number
@@ -18,5 +23,5 @@ export interface Foo {
   foo_double: number
   foo_string: string
   foo_bool: boolean
-  bar: unknownwoo
+  bar: Bar
 }

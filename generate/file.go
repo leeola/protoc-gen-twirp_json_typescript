@@ -4,13 +4,9 @@ import (
 	"fmt"
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
-	"github.com/rs/zerolog/log"
 )
 
 func File(w *Writer, f *descriptor.FileDescriptorProto) error {
-
-	log.Info().Msgf("file? %#v", f)
-
 	w.P("//")
 	w.P("// generated file, do not modify")
 	w.P("//")
@@ -28,8 +24,14 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	//   }
 	// }
 
+	for _, e := range f.GetEnumType() {
+		if err := Enum(w, e); err != nil {
+			return fmt.Errorf("Message: %v", err)
+		}
+	}
+
 	for _, m := range f.GetMessageType() {
-		if err := Message(w, m); err != nil {
+		if err := Message(w, f, m); err != nil {
 			return fmt.Errorf("Message: %v", err)
 		}
 	}
