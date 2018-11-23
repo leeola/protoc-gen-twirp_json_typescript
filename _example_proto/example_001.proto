@@ -8,5 +8,20 @@ enum Bar {
 }
 
 message Foo {
-  string field_a = 1;
+  int32 foo_int32       = 1;
+  int64 foo_int64       = 2;
+  uint32 foo_uint32     = 3;
+  uint64 foo_uint64     = 4;
+  sint32 foo_sint32     = 5;
+  sint64 foo_sint64     = 6;
+  fixed32 foo_fixed32   = 7;
+  fixed64 foo_fixed64   = 8;
+  sfixed32 foo_sfixed32 = 9;
+  sfixed64 foo_sfixed64 = 10;
+  float foo_float       = 11;
+  double foo_double     = 12;
+  string foo_string     = 13;
+  bool foo_bool         = 14;
+  // not supported yet
+  // bytes foo_bytes       = 15;
 }

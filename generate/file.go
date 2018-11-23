@@ -28,5 +28,11 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	//   }
 	// }
 
+	for _, m := range f.GetMessageType() {
+		if err := Message(w, m); err != nil {
+			return fmt.Errorf("Message: %v", err)
+		}
+	}
+
 	return nil
 }
