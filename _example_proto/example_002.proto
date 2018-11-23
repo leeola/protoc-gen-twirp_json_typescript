@@ -5,5 +5,6 @@ import "example_001.proto";
 import "dir/example_003.proto";
 
 message Foo {
-  //example_001.Bar bar   = 16;
+  example_001.Bar bar_001   = 1;
+  example_003.Foo foo_003   = 2;
 }

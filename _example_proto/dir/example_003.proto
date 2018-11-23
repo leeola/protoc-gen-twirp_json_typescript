@@ -1,6 +1,7 @@
 syntax = "proto3";
 package example_003;
 
-message Foo {
-  string foo = 1;
+enum Foo {
+  UNKOWN = 0;
+  FOO = 1;
 }

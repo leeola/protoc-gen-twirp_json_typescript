@@ -20,9 +20,7 @@ func Dependency(w *Writer, depPath string) error {
 // value.
 func TSImportName(depPath string) string {
 	depPath = DropExt(depPath)
-	// we could try escaping all non-alpha-num as underscore,
-	// but for now just focus on the expected syntax - unix path sep.
-	return strings.Replace(depPath, "/", "_", -1)
+	return filepath.Base(depPath)
 }
 
 // TSExt will replace the ext with a .ts extension.
