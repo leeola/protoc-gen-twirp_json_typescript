@@ -27,7 +27,6 @@ func ServiceInterface(w *Writer, f *descriptor.FileDescriptorProto, s *descripto
 		if err != nil {
 			return fmt.Errorf("method %s input splitPackageType: %v", methodName, err)
 		}
-		inputName := strings.ToLower(inputTypeName)
 		if filePackageName == inputPackageName {
 			inputType = inputTypeName
 		}
@@ -41,7 +40,7 @@ func ServiceInterface(w *Writer, f *descriptor.FileDescriptorProto, s *descripto
 			outputType = outputTypeName
 		}
 
-		w.Pf("  %s: (%s: %s) => Promise<%s>\n", methodName, inputName, inputType, outputType)
+		w.Pf("  %s: (req: %s) => Promise<%s>\n", methodName, inputType, outputType)
 	}
 
 	w.P("}")
@@ -56,10 +55,10 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 	w.P()
 	w.Pf("export class %sImpl implements %s {\n", serviceName, serviceName)
 	w.P("  private twirpAddr: string")
-	w.P("  private fetch: (input: any) => Promise<Response>")
+	w.P("  private fetch: (url: string, req?: object) => Promise<Response>")
 
 	w.P()
-	w.P("  constructor(twirpAddr: string, customFetch?: (input: any) => Promise<Response>) {")
+	w.P("  constructor(twirpAddr: string, customFetch?: (url: string, req?: object) => Promise<Response>) {")
 	w.P("    this.twirpAddr = twirpAddr")
 	w.P("    this.fetch = customFetch ? customFetch : fetch")
 	w.P("  }")
@@ -72,7 +71,6 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 		if err != nil {
 			return fmt.Errorf("method %s input splitPackageType: %v", methodName, err)
 		}
-		inputName := strings.ToLower(inputTypeName)
 		if filePackageName == inputPackageName {
 			inputType = inputTypeName
 		}
@@ -87,9 +85,14 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 		}
 
 		w.P()
-		w.Pf("  %s(%s: %s): Promise<%s> {\n", methodName, inputName, inputType, outputType)
+		w.Pf("  %s(req: %s): Promise<%s> {\n", methodName, inputType, outputType)
 		w.Pf("    const url = `${this.twirpAddr}/twirp/%s.%s/%s`\n", filePackageName, serviceName, methodName)
-		w.P("    return this.fetch(url).then((res) => res.json())")
+		w.P("    const fetchReq = {")
+		w.P("      body: JSON.stringify(req),")
+		w.P("      headers: { \"Content-Type\": \"application/json\" },")
+		w.P("      method: \"POST\",")
+		w.P("    }")
+		w.P("    return this.fetch(url, fetchReq).then((res) => res.json())")
 		w.P("  }")
 	}
 

@@ -3,7 +3,7 @@
 //
 
 export interface FooService {
-  Foo: (foorequest: FooRequest) => Promise<FooResponse>
+  Foo: (req: FooRequest) => Promise<FooResponse>
 }
 
 export interface FooRequest {
@@ -16,15 +16,20 @@ export interface FooResponse {
 
 export class FooServiceImpl implements FooService {
   private twirpAddr: string
-  private fetch: (input: any) => Promise<Response>
+  private fetch: (url: string, req?: object) => Promise<Response>
 
-  constructor(twirpAddr: string, customFetch?: (input: any) => Promise<Response>) {
+  constructor(twirpAddr: string, customFetch?: (url: string, req?: object) => Promise<Response>) {
     this.twirpAddr = twirpAddr
     this.fetch = customFetch ? customFetch : fetch
   }
 
-  Foo(foorequest: FooRequest): Promise<FooResponse> {
+  Foo(req: FooRequest): Promise<FooResponse> {
     const url = `${this.twirpAddr}/twirp/example_004.FooService/Foo`
-    return this.fetch(url).then((res) => res.json())
+    const fetchReq = {
+      body: JSON.stringify(req),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    }
+    return this.fetch(url, fetchReq).then((res) => res.json())
   }
 }
