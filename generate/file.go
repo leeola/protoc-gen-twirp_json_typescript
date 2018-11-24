@@ -34,8 +34,8 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	// generate the service interfaces first, for a good dev UX.
 	// Ie, people may open the file and care about viewing the interface,
 	// the actual implementation is less important.
-	for _, s := range f.GetService() {
-		if err := ServiceInterface(w, f, s); err != nil {
+	for i, s := range f.GetService() {
+		if err := ServiceInterface(w, f, s, pathLoc.NestService(i)); err != nil {
 			return fmt.Errorf("Service: %v", err)
 		}
 	}

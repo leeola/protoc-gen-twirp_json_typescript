@@ -7,8 +7,14 @@ import (
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 )
 
-func ServiceInterface(w *Writer, f *descriptor.FileDescriptorProto, s *descriptor.ServiceDescriptorProto) error {
+func ServiceInterface(w *Writer, f *descriptor.FileDescriptorProto, s *descriptor.ServiceDescriptorProto, pathLoc PathLoc) error {
 	w.P()
+
+	leadingComments, ok := pathLoc.LeadingComments()
+	if ok {
+		w.P("// ", leadingComments)
+	}
+
 	w.Pf("export interface %s {\n", s.GetName())
 
 	filePackageName := f.GetPackage()

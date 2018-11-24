@@ -25,13 +25,21 @@ func NewPathLoc(f *descriptor.FileDescriptorProto) PathLoc {
 }
 
 func (pl PathLoc) NestMessage(index int) PathLoc {
+	return pl.nestType(sourceTypeMessage, index)
+}
+
+func (pl PathLoc) NestService(index int) PathLoc {
+	return pl.nestType(sourceTypeService, index)
+}
+
+func (pl PathLoc) nestType(locType int32, index int) PathLoc {
 	startIndex := pl.locationIndex
 	locs, ok := pl.getLocs(startIndex)
 	if !ok {
 		return PathLoc{}
 	}
 
-	nextPath := nestPath(pl.Path, sourceTypeMessage, int32(index))
+	nextPath := nestPath(pl.Path, locType, int32(index))
 
 	locIndex, loc, ok := matchPath(locs, nextPath)
 	if !ok {

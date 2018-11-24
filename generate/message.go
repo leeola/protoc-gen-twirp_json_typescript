@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
-	"github.com/rs/zerolog/log"
 )
 
 // optionalFields is a placeholder for a future protobuf option,
@@ -20,7 +19,6 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.Desc
 
 	w.P()
 
-	log.Info().Msgf("path? %v", pathLoc.Path)
 	leadingComments, ok := pathLoc.LeadingComments()
 	if ok {
 		w.P("// ", leadingComments)
