@@ -19,9 +19,8 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.Desc
 
 	w.P()
 
-	leadingComments, ok := pathLoc.LeadingComments()
-	if ok {
-		w.P("// ", leadingComments)
+	for _, line := range pathLoc.LeadingComments() {
+		w.Pf("//%s\n", line)
 	}
 
 	w.Pf("export interface %s {\n", m.GetName())

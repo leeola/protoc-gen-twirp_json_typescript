@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -76,28 +77,32 @@ func (pl PathLoc) NextMessage(index int) PathLoc {
 	}
 }
 
-func (pl PathLoc) LeadingComments() (string, bool) {
+func (pl PathLoc) LeadingComments() []string {
 	if pl.loc == nil {
-		return "", false
+		log.Warn().Ints32("path", pl.Path).Msg("unable to locate path")
+		return nil
 	}
 	c := pl.loc.GetLeadingComments()
 	if c == "" {
-		return "", false
+		return nil
 	}
-	// comes with a trailing newline.
-	return strings.TrimSpace(c), true
+	// last char appears to be a newline. Drop it.
+	c = c[:len(c)-1]
+	return strings.Split(c, "\n")
 }
 
-func (pl PathLoc) TrailingComments() (string, bool) {
+func (pl PathLoc) TrailingComments() []string {
 	if pl.loc == nil {
-		return "", false
+		log.Warn().Ints32("path", pl.Path).Msg("unable to locate path")
+		return nil
 	}
 	c := pl.loc.GetTrailingComments()
 	if c == "" {
-		return "", false
+		return nil
 	}
-	// comes with a trailing newline.
-	return strings.TrimSpace(c), true
+	// last char appears to be a newline. Drop it.
+	c = c[:len(c)-1]
+	return strings.Split(c, "\n")
 }
 
 func (pl PathLoc) getLocs(locStart int) ([]*descriptor.SourceCodeInfo_Location, bool) {

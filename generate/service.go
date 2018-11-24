@@ -10,9 +10,8 @@ import (
 func ServiceInterface(w *Writer, f *descriptor.FileDescriptorProto, s *descriptor.ServiceDescriptorProto, pathLoc PathLoc) error {
 	w.P()
 
-	leadingComments, ok := pathLoc.LeadingComments()
-	if ok {
-		w.P("// ", leadingComments)
+	for _, line := range pathLoc.LeadingComments() {
+		w.Pf("//%s\n", line)
 	}
 
 	w.Pf("export interface %s {\n", s.GetName())
