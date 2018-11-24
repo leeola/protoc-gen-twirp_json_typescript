@@ -105,10 +105,17 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 //
 // Formatting is expected to be in protobuf AST style, `.package.Type`.
 func splitPackageType(packageTypeName string) (packageName, typeName string, err error) {
-	split := strings.SplitN(packageTypeName, ".", 3)
-	if len(split) != 3 {
-		return "", "", fmt.Errorf("unexpected package.type format: %q", typeName)
+	i := strings.LastIndex(packageTypeName, ".")
+
+	// if i is at 0 or -1 it's an invalid input. 1 is likely invalid too, but
+	// not technically broken to this function, at least.
+	if i < 1 {
+		return "", "", fmt.Errorf("unexpected package.type format: %q", packageTypeName)
 	}
 
-	return split[1], split[2], nil
+	// drop the proceeding .
+	packageName = packageTypeName[1:i]
+	// drop the trailing .
+	typeName = packageTypeName[i+1:]
+	return packageName, typeName, nil
 }
