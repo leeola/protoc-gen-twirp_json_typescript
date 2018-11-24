@@ -22,6 +22,9 @@ export interface Foo {
   foo_double: number
   foo_string: string
   foo_bool: boolean
+
+  // not supported yet
+  // bytes foo_bytes       = 15;
   bar: Bar
   baz: Baz
 }

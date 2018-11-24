@@ -25,7 +25,19 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.Desc
 
 	w.Pf("export interface %s {\n", m.GetName())
 
-	for _, f := range m.GetField() {
+	for i, f := range m.GetField() {
+		fieldPathLoc := pathLoc.NestField(i)
+
+		if lines := fieldPathLoc.LeadingComments(); len(lines) > 0 {
+			if i != 0 {
+				w.P()
+			}
+
+			for _, line := range lines {
+				w.Pf("  //%s\n", line)
+			}
+		}
+
 		var tsType string
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_INT32,

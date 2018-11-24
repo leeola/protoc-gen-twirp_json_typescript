@@ -10,8 +10,14 @@ export interface Haberdasher {
 
 // A Hat is a piece of headwear made by a Haberdasher.
 export interface Hat {
+  // The size of a hat should always be in inches.
   size: number
+
+  // The color of a hat will never be 'invisible', but other than
+  // that, anything is fair game.
   color: string
+
+  // The name of a hat is it's type. Like, 'bowler', or something.
   name: string
 }
 
