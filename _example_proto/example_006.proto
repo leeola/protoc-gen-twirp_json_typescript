@@ -1,0 +1,12 @@
+syntax = "proto3";
+package example_006;
+
+service Foo {
+  rpc Foo(Bar) returns (Bar);
+  rpc FooBar(Bar) returns (Bar);
+}
+
+message Bar {
+  string foo = 1;
+  string bar_baz = 2;
+}

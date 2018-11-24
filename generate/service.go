@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
+	"github.com/iancoleman/strcase"
 )
 
 func ServiceInterface(w *Writer, f *descriptor.FileDescriptorProto, s *descriptor.ServiceDescriptorProto, pathLoc PathLoc) error {
@@ -25,7 +26,7 @@ func ServiceInterface(w *Writer, f *descriptor.FileDescriptorProto, s *descripto
 			w.Pf("  //%s\n", line)
 		}
 
-		methodName := m.GetName()
+		methodName := strcase.ToLowerCamel(m.GetName())
 		if m.GetClientStreaming() {
 			return fmt.Errorf("unsupported use of Client Streaming on method: %s", methodName)
 		}
@@ -75,7 +76,7 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 	w.P("  }")
 
 	for _, m := range s.GetMethod() {
-		methodName := m.GetName()
+		methodName := strcase.ToLowerCamel(m.GetName())
 
 		inputType := m.GetInputType()
 		inputPackageName, inputTypeName, err := splitPackageType(inputType)

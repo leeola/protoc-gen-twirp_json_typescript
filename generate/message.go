@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
+	"github.com/iancoleman/strcase"
 )
 
 // optionalFields is a placeholder for a future protobuf option,
@@ -69,7 +70,8 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.Desc
 			return fmt.Errorf("unhandled type: %v", t)
 		}
 
-		w.Pf("  %s: %s\n", f.GetName(), tsType)
+		fieldName := strcase.ToLowerCamel(f.GetName())
+		w.Pf("  %s: %s\n", fieldName, tsType)
 	}
 
 	w.P("}")
