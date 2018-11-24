@@ -4,6 +4,7 @@
 
 // A Haberdasher makes hats for clients.
 export interface Haberdasher {
+  // MakeHat produces a hat of mysterious, randomly-selected color!
   MakeHat: (req: Size) => Promise<Hat>
 }
 

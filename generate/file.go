@@ -11,15 +11,6 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	w.P("// generated file, do not modify")
 	w.P("//")
 
-	// locs := f.GetSourceCodeInfo().GetLocation()
-
-	// for i, loc := range locs {
-	// 	log.Debug().Msgf("%02d  path? %v", i, loc.GetPath())
-	// 	log.Debug().Msgf("comments? %v", loc.GetLeadingComments())
-	// 	log.Debug().Msgf("detached? %v", loc.GetLeadingDetachedComments())
-	// 	log.Debug().Msgf("trailing? %v", loc.GetTrailingComments())
-	// }
-
 	pathLoc := NewPathLoc(f)
 
 	if deps := f.GetDependency(); len(deps) > 0 {

@@ -25,6 +25,10 @@ func NewPathLoc(f *descriptor.FileDescriptorProto) PathLoc {
 	return PathLoc{file: f}
 }
 
+func (pl PathLoc) NestField(index int) PathLoc {
+	return pl.nestType(sourceTypeField, index)
+}
+
 func (pl PathLoc) NestMessage(index int) PathLoc {
 	return pl.nestType(sourceTypeMessage, index)
 }

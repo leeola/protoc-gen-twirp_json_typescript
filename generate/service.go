@@ -18,7 +18,13 @@ func ServiceInterface(w *Writer, f *descriptor.FileDescriptorProto, s *descripto
 
 	filePackageName := f.GetPackage()
 
-	for _, m := range s.GetMethod() {
+	for i, m := range s.GetMethod() {
+		fieldPathLoc := pathLoc.NestField(i)
+
+		for _, line := range fieldPathLoc.LeadingComments() {
+			w.Pf("  //%s\n", line)
+		}
+
 		methodName := m.GetName()
 		if m.GetClientStreaming() {
 			return fmt.Errorf("unsupported use of Client Streaming on method: %s", methodName)
