@@ -56,11 +56,12 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 	w.P()
 	w.Pf("export class %sImpl implements %s {\n", serviceName, serviceName)
 	w.P("  private twirpAddr: string")
-	w.P("  private fetch?: (input: any) => Promise<Response>")
+	w.P("  private fetch: (input: any) => Promise<Response>")
 
 	w.P()
-	w.P("  constructor(twirpAddr: string) {")
+	w.P("  constructor(twirpAddr: string, customFetch?: (input: any) => Promise<Response>) {")
 	w.P("    this.twirpAddr = twirpAddr")
+	w.P("    this.fetch = customFetch ? customFetch : fetch")
 	w.P("  }")
 
 	for _, m := range s.GetMethod() {
@@ -88,7 +89,7 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 		w.P()
 		w.Pf("  %s(%s: %s): Promise<%s> {\n", methodName, inputName, inputType, outputType)
 		w.Pf("    const url = `${this.twirpAddr}/twirp/%s.%s/%s`\n", filePackageName, serviceName, methodName)
-		w.P("    return fetch(url).then((res) => res.json())")
+		w.P("    return this.fetch(url).then((res) => res.json())")
 		w.P("  }")
 	}
 

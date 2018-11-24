@@ -16,14 +16,15 @@ export interface FooResponse {
 
 export class FooServiceImpl implements FooService {
   private twirpAddr: string
-  private fetch?: (input: any) => Promise<Response>
+  private fetch: (input: any) => Promise<Response>
 
-  constructor(twirpAddr: string) {
+  constructor(twirpAddr: string, customFetch?: (input: any) => Promise<Response>) {
     this.twirpAddr = twirpAddr
+    this.fetch = customFetch ? customFetch : fetch
   }
 
   Foo(foorequest: FooRequest): Promise<FooResponse> {
     const url = `${this.twirpAddr}/twirp/example_004.FooService/Foo`
-    return fetch(url).then((res) => res.json())
+    return this.fetch(url).then((res) => res.json())
   }
 }
