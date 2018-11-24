@@ -2,7 +2,6 @@
 // generated file, do not modify
 //
 
-
 export enum Bar {
   UNKNOWN = 0,
   BAR_FOO = 1,

@@ -20,7 +20,7 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 		}
 	}
 
-	// generate the service interfaces first, for a good UX.
+	// generate the service interfaces first, for a good dev UX.
 	// Ie, people may open the file and care about viewing the interface,
 	// the actual implementation is less important.
 	for _, s := range f.GetService() {
