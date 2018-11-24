@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
+	"github.com/rs/zerolog/log"
 )
 
 // optionalFields is a placeholder for a future protobuf option,
@@ -14,10 +15,17 @@ import (
 // TODO(leeola): convert this field to be supplied by a proto option.
 const optionalFields = true // default true for now, my pref
 
-func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.DescriptorProto) error {
+func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.DescriptorProto, pathLoc PathLoc) error {
 	packageName := file.GetPackage()
 
 	w.P()
+
+	log.Info().Msgf("path? %v", pathLoc.Path)
+	leadingComments, ok := pathLoc.LeadingComments()
+	if ok {
+		w.P("// ", leadingComments)
+	}
+
 	w.Pf("export interface %s {\n", m.GetName())
 
 	for _, f := range m.GetField() {

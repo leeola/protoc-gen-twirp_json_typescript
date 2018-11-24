@@ -6,12 +6,15 @@ export interface Haberdasher {
   MakeHat: (req: Size) => Promise<Hat>
 }
 
+//  A Hat is a piece of headwear made by a Haberdasher.
 export interface Hat {
   size: number
   color: string
   name: string
 }
 
+//  Size is passed when requesting a new hat to be made. It's always
+ measured in inches.
 export interface Size {
   inches: number
 }
