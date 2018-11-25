@@ -27,13 +27,17 @@ export interface Size {
   inches: number
 }
 
+function windowFetch(url, req) {
+  return fetch(url, req)
+}
+
 export class HaberdasherClient implements Haberdasher {
   private twirpAddr: string
   private fetch: (url: string, req?: object) => Promise<Response>
 
   constructor(twirpAddr: string, customFetch?: (url: string, req?: object) => Promise<Response>) {
     this.twirpAddr = twirpAddr
-    this.fetch = customFetch ? customFetch : fetch
+    this.fetch = customFetch ? customFetch : windowFetch
   }
 
   makeHat(req: Size): Promise<Hat> {

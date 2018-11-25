@@ -72,7 +72,7 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 	w.P()
 	w.P("  constructor(twirpAddr: string, customFetch?: (url: string, req?: object) => Promise<Response>) {")
 	w.P("    this.twirpAddr = twirpAddr")
-	w.P("    this.fetch = customFetch ? customFetch : fetch")
+	w.P("    this.fetch = customFetch ? customFetch : windowFetch")
 	w.P("  }")
 
 	for _, m := range s.GetMethod() {

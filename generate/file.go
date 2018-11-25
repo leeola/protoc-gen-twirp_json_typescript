@@ -47,9 +47,16 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	}
 
 	// finally, implement the services.
-	for _, s := range f.GetService() {
-		if err := ServiceImplementation(w, f, s); err != nil {
-			return fmt.Errorf("Service: %v", err)
+	if services := f.GetService(); len(services) > 0 {
+		w.P()
+		w.P("function windowFetch(url, req) {")
+		w.P("  return fetch(url, req)")
+		w.P("}")
+
+		for _, s := range services {
+			if err := ServiceImplementation(w, f, s); err != nil {
+				return fmt.Errorf("Service: %v", err)
+			}
 		}
 	}
 
