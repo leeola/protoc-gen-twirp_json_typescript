@@ -19,11 +19,6 @@ const optionalFields = true // default true for now, my pref
 func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *descriptor.DescriptorProto, pathLoc PathLoc) error {
 	packageName := file.GetPackage()
 
-	// embedded enums not yet supported
-	if enumType := m.GetEnumType(); len(enumType) > 0 {
-		return fmt.Errorf("embedded enums not yet supported")
-	}
-
 	// oneof not yet supported
 	if oneofs := m.GetOneofDecl(); len(oneofs) > 0 {
 		return fmt.Errorf("oneof not yet supported")
@@ -37,6 +32,12 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *
 	}
 
 	nestedPrefix := messageName
+	for _, nested := range m.GetEnumType() {
+		if err := Enum(w, nestedPrefix, nested); err != nil {
+			return fmt.Errorf("Enum: %v", err)
+		}
+	}
+
 	for i, nested := range m.GetNestedType() {
 		if err := Message(w, file, nestedPrefix, nested, pathLoc.NestMessage(i)); err != nil {
 			return fmt.Errorf("Message: %v", err)

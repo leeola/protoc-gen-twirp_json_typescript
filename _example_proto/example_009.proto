@@ -9,7 +9,12 @@ message Foo {
     // embedded type's field.
     string bar = 1;
   }
-
   // field type of embedded type.
   Bar bar = 2;
+
+  enum Baz {
+    UNKNOWN = 0;
+    BAZ     = 1;
+  }
+  Baz baz = 3;
 }

@@ -37,7 +37,7 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	}
 
 	for _, e := range f.GetEnumType() {
-		if err := Enum(w, e); err != nil {
+		if err := Enum(w, "", e); err != nil {
 			return fmt.Errorf("Message: %v", err)
 		}
 	}
