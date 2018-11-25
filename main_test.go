@@ -25,14 +25,16 @@ const (
 )
 
 var (
-	pluginLog   string
-	onlyProto   string
-	alphaNumReg *regexp.Regexp
+	pluginLog        string
+	onlyProto        string
+	alphaNumReg      *regexp.Regexp
+	protocProtoPaths stringSlice
 )
 
 func init() {
 	flag.StringVar(&pluginLog, "plugin-log", "", "file to write plugin logs to")
 	flag.StringVar(&onlyProto, "only-proto", "", "test against the specified proto")
+	flag.Var(&protocProtoPaths, "protoc-proto-path", "custom protoc -I paths for testing")
 
 	alphaNumReg = regexp.MustCompile("[^a-zA-Z0-9]+")
 }
@@ -119,12 +121,18 @@ func compileProto(t *testing.T, pluginPath, protoPath, tsDir string) error {
 		return fmt.Errorf("MkdirAll: %v", err)
 	}
 
-	cmd := exec.Command("protoc",
+	cmdArgs := []string{
 		"--proto_path", "_example_proto",
+	}
+	for _, protocProtoPath := range protocProtoPaths {
+		cmdArgs = append(cmdArgs, "--proto_path", protocProtoPath)
+	}
+	cmdArgs = append(cmdArgs,
 		fmt.Sprintf("--plugin=%s", pluginPath),
 		fmt.Sprintf("--%s_out=%s", pluginName, tsDir),
-		protoPath,
-	)
+		protoPath)
+
+	cmd := exec.Command("protoc", cmdArgs...)
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
@@ -188,4 +196,15 @@ func logReadCloser(t *testing.T, logName string, rc io.ReadCloser) {
 	if err := scanner.Err(); err != nil {
 		t.Fatalf("%s scanner: %v", logName, err)
 	}
+}
+
+type stringSlice []string
+
+func (s stringSlice) String() string {
+	return fmt.Sprint([]string(s))
+}
+
+func (ssPtr *stringSlice) Set(value string) error {
+	*ssPtr = append(*ssPtr, value)
+	return nil
 }
