@@ -5,7 +5,7 @@
 // A Haberdasher makes hats for clients.
 export interface Haberdasher {
   // MakeHat produces a hat of mysterious, randomly-selected color!
-  MakeHat: (req: Size) => Promise<Hat>
+  makeHat: (req: Size) => Promise<Hat>
 }
 
 // A Hat is a piece of headwear made by a Haberdasher.
@@ -36,8 +36,8 @@ export class HaberdasherImpl implements Haberdasher {
     this.fetch = customFetch ? customFetch : fetch
   }
 
-  MakeHat(req: Size): Promise<Hat> {
-    const url = `${this.twirpAddr}/twirp/twitch.twirp.example.Haberdasher/MakeHat`
+  makeHat(req: Size): Promise<Hat> {
+    const url = `${this.twirpAddr}/twirp/twitch.twirp.example.Haberdasher/makeHat`
     const fetchReq = {
       body: JSON.stringify(req),
       headers: { "Content-Type": "application/json" },

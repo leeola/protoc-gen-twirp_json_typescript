@@ -16,7 +16,7 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	if deps := f.GetDependency(); len(deps) > 0 {
 		w.P()
 		for _, dep := range deps {
-			if err := Dependency(w, dep); err != nil {
+			if err := Dependency(w, f, dep); err != nil {
 				return fmt.Errorf("Dependency: %v", err)
 			}
 		}

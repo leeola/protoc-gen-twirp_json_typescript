@@ -1,0 +1,11 @@
+syntax = "proto3";
+package example_007;
+
+import "example_001.proto";
+import "dir/dur/example_008.proto";
+
+message Foo {
+  string foo          = 1;
+  example_001.Bar bar = 2;
+  example_008.Foo baz = 3;
+}

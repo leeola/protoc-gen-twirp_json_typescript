@@ -8,23 +8,21 @@ export enum Bar {
 }
 
 export interface Foo {
-  foo_int32: number
-  foo_int64: number
-  foo_uint32: number
-  foo_uint64: number
-  foo_sint32: number
-  foo_sint64: number
-  foo_fixed32: number
-  foo_fixed64: number
-  foo_sfixed32: number
-  foo_sfixed64: number
-  foo_float: number
-  foo_double: number
-  foo_string: string
-  foo_bool: boolean
-
-  // not supported yet
-  // bytes foo_bytes       = 15;
+  fooInt32: number
+  fooInt64: number
+  fooUint32: number
+  fooUint64: number
+  fooSint32: number
+  fooSint64: number
+  fooFixed32: number
+  fooFixed64: number
+  fooSfixed32: number
+  fooSfixed64: number
+  fooFloat: number
+  fooDouble: number
+  fooString: string
+  fooBool: boolean
+  fooBytes: string
   bar: Bar
   baz: Baz
 }

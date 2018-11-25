@@ -4,12 +4,23 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+
+	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 )
 
-func Dependency(w *Writer, depPath string) error {
+func Dependency(w *Writer, f *descriptor.FileDescriptorProto, depPath string) error {
 	depName := TSImportName(depPath)
-	_, err := w.Pf("import * as %s from \"./%s\"\n", depName, DropExt(depPath))
+
+	relPath, err := filepath.Rel(filepath.Dir(f.GetName()), DropExt(depPath))
 	if err != nil {
+		return fmt.Errorf("Rel: %v", err)
+	}
+
+	if !strings.HasPrefix(relPath, ".") {
+		relPath = "./" + relPath
+	}
+
+	if _, err = w.Pf("import * as %s from \"%s\"\n", depName, relPath); err != nil {
 		return fmt.Errorf("Pf: %v", err)
 	}
 

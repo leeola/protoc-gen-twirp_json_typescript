@@ -3,7 +3,7 @@
 //
 
 export interface FooService {
-  Foo: (req: FooRequest) => Promise<FooResponse>
+  foo: (req: FooRequest) => Promise<FooResponse>
 }
 
 export interface FooRequest {
@@ -23,8 +23,8 @@ export class FooServiceImpl implements FooService {
     this.fetch = customFetch ? customFetch : fetch
   }
 
-  Foo(req: FooRequest): Promise<FooResponse> {
-    const url = `${this.twirpAddr}/twirp/example_004.FooService/Foo`
+  foo(req: FooRequest): Promise<FooResponse> {
+    const url = `${this.twirpAddr}/twirp/example_004.FooService/foo`
     const fetchReq = {
       body: JSON.stringify(req),
       headers: { "Content-Type": "application/json" },
