@@ -41,7 +41,7 @@ export class HaberdasherClient implements Haberdasher {
   }
 
   makeHat(req: Size): Promise<Hat> {
-    const url = `${this.twirpAddr}/twirp/twitch.twirp.example.Haberdasher/makeHat`
+    const url = `${this.twirpAddr}/twirp/twitch.twirp.example.Haberdasher/MakeHat`
     const fetchReq = {
       body: JSON.stringify(req),
       headers: { "Content-Type": "application/json" },

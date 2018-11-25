@@ -76,7 +76,9 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 	w.P("  }")
 
 	for _, m := range s.GetMethod() {
-		methodName := strcase.ToLowerCamel(m.GetName())
+
+		camelName := m.GetName()
+		methodName := strcase.ToLowerCamel(camelName)
 
 		inputType := m.GetInputType()
 		inputPackageName, inputTypeName, err := splitPackageType(inputType)
@@ -98,7 +100,7 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 
 		w.P()
 		w.Pf("  %s(req: %s): Promise<%s> {\n", methodName, inputType, outputType)
-		w.Pf("    const url = `${this.twirpAddr}/twirp/%s.%s/%s`\n", filePackageName, serviceName, methodName)
+		w.Pf("    const url = `${this.twirpAddr}/twirp/%s.%s/%s`\n", filePackageName, serviceName, camelName)
 		w.P("    const fetchReq = {")
 		w.P("      body: JSON.stringify(req),")
 		w.P("      headers: { \"Content-Type\": \"application/json\" },")

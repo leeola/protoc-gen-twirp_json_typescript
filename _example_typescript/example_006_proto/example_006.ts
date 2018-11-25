@@ -26,7 +26,7 @@ export class FooClient implements Foo {
   }
 
   foo(req: Bar): Promise<Bar> {
-    const url = `${this.twirpAddr}/twirp/example_006.Foo/foo`
+    const url = `${this.twirpAddr}/twirp/example_006.Foo/Foo`
     const fetchReq = {
       body: JSON.stringify(req),
       headers: { "Content-Type": "application/json" },
@@ -36,7 +36,7 @@ export class FooClient implements Foo {
   }
 
   fooBar(req: Bar): Promise<Bar> {
-    const url = `${this.twirpAddr}/twirp/example_006.Foo/fooBar`
+    const url = `${this.twirpAddr}/twirp/example_006.Foo/FooBar`
     const fetchReq = {
       body: JSON.stringify(req),
       headers: { "Content-Type": "application/json" },

@@ -28,7 +28,7 @@ export class FooServiceClient implements FooService {
   }
 
   foo(req: FooRequest): Promise<FooResponse> {
-    const url = `${this.twirpAddr}/twirp/example_004.FooService/foo`
+    const url = `${this.twirpAddr}/twirp/example_004.FooService/Foo`
     const fetchReq = {
       body: JSON.stringify(req),
       headers: { "Content-Type": "application/json" },
