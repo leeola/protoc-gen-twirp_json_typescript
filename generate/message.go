@@ -31,14 +31,22 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *
 		messageName = prefix + "_" + m.GetName()
 	}
 
+	typeAliases := map[string]string{}
+
 	nestedPrefix := messageName
 	for _, nested := range m.GetEnumType() {
+		nestedName := nested.GetName()
+		nestedType := messageName + "." + nestedName
+		typeAliases[nestedType] = messageName + "_" + nestedName
 		if err := Enum(w, nestedPrefix, nested); err != nil {
 			return fmt.Errorf("Enum: %v", err)
 		}
 	}
 
 	for i, nested := range m.GetNestedType() {
+		nestedName := nested.GetName()
+		nestedType := messageName + "." + nestedName
+		typeAliases[nestedType] = messageName + "_" + nestedName
 		if err := Message(w, file, nestedPrefix, nested, pathLoc.NestMessage(i)); err != nil {
 			return fmt.Errorf("Message: %v", err)
 		}
@@ -95,13 +103,14 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *
 			if strings.HasPrefix(typeName, packageName) {
 				typeName = strings.TrimPrefix(typeName, packageName+".")
 			}
-			// replace Foo.Bar.Baz embedded type names, with
-			// underscore variants.
-			//
-			// This might behacky, but in theory dots cannot exist in type names,
-			// so if there is a dot it's an embedded usage. If a problem arrises here,
-			// a more robust solution may be needed.
-			tsType = strings.Replace(typeName, ".", "_", -1)
+
+			// if it's aliased, replace the type name.
+			if alias, ok := typeAliases[typeName]; ok {
+				typeName = alias
+			}
+
+			tsType = typeName
+
 		default:
 			return fmt.Errorf("unhandled type: %v", t)
 		}
