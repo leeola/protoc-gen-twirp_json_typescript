@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/iancoleman/strcase"
+	"github.com/rs/zerolog/log"
 )
 
 // optionalFields is a placeholder for a future protobuf option,
@@ -58,7 +59,11 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.Desc
 			tsType = "string"
 		case descriptor.FieldDescriptorProto_TYPE_BOOL:
 			tsType = "boolean"
-		// case descriptor.FieldDescriptorProto_TYPE_BYTES:
+		case descriptor.FieldDescriptorProto_TYPE_BYTES:
+			// not sure what type to represent bytes as, in JS.
+			// .. this is largely experimental, to make gogoproto work.
+			tsType = "string"
+			log.Warn().Msg("TypeBytes is not yet tested")
 		case descriptor.FieldDescriptorProto_TYPE_ENUM,
 			descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			typeName := f.GetTypeName()[1:] // remove . prefix

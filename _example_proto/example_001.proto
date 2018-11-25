@@ -22,10 +22,9 @@ message Foo {
   double foo_double     = 12;
   string foo_string     = 13;
   bool foo_bool         = 14;
-  // not supported yet
-  // bytes foo_bytes       = 15;
-  Bar bar = 16;
-  Baz baz = 17;
+  bytes foo_bytes       = 15;
+  Bar bar               = 16;
+  Baz baz               = 17;
 }
 
 message Baz {
