@@ -4,9 +4,14 @@ import (
 	"fmt"
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
+	"github.com/rs/zerolog/log"
 )
 
 func File(w *Writer, f *descriptor.FileDescriptorProto) error {
+	log.Debug().
+		Str("file", f.GetName()).
+		Msg("generate file")
+
 	w.P("//")
 	w.P("// generated file, do not modify")
 	w.P("//")
