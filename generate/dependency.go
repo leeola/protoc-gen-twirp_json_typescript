@@ -8,7 +8,30 @@ import (
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 )
 
-func Dependency(w *Writer, f *descriptor.FileDescriptorProto, depPath string) error {
+func Dependencies(w *Writer, f *descriptor.FileDescriptorProto, depPaths []string) error {
+	usedTypes, err := PossibleFileImports(f)
+	if err != nil {
+		return fmt.Errorf("FileTypes: %v", err)
+	}
+
+	for _, depPath := range depPaths {
+		inUse := false
+		for _, inUseDep := range usedTypes {
+			if DropExt(filepath.Base(depPath)) == inUseDep {
+				inUse = true
+				break
+			}
+		}
+
+		if err := Dependency(w, f, depPath, inUse); err != nil {
+			return fmt.Errorf("Dependency: %v", err)
+		}
+	}
+
+	return nil
+}
+
+func Dependency(w *Writer, f *descriptor.FileDescriptorProto, depPath string, inUse bool) error {
 	depName := TSImportName(depPath)
 
 	relPath, err := filepath.Rel(filepath.Dir(f.GetName()), DropExt(depPath))
@@ -20,11 +43,39 @@ func Dependency(w *Writer, f *descriptor.FileDescriptorProto, depPath string) er
 		relPath = "./" + relPath
 	}
 
+	if !inUse {
+		w.P("// Following import is not in use.")
+		// no newline on purpose
+		w.Pf("// ")
+	}
+
 	if _, err = w.Pf("import * as %s from \"%s\"\n", depName, relPath); err != nil {
 		return fmt.Errorf("Pf: %v", err)
 	}
 
 	return nil
+}
+
+func PossibleFileImports(f *descriptor.FileDescriptorProto) ([]string, error) {
+	var types []string
+
+	for _, m := range f.GetMessageType() {
+		types = messageImports(types, m)
+	}
+
+	return types, nil
+}
+
+func messageImports(types []string, m *descriptor.DescriptorProto) []string {
+	for _, f := range m.GetField() {
+		switch t := f.GetType(); t {
+		case descriptor.FieldDescriptorProto_TYPE_ENUM,
+			descriptor.FieldDescriptorProto_TYPE_MESSAGE:
+			typeName := strings.SplitN(f.GetTypeName(), ".", 3)[1]
+			types = append(types, typeName)
+		}
+	}
+	return types
 }
 
 // TSImportName returns the typescript importname from the protoc dependency

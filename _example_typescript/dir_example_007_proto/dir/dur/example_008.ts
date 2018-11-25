@@ -2,6 +2,7 @@
 // generated file, do not modify
 //
 
-export interface Foo {
-  foo: string
+export enum Foo {
+  UNKNOWN = 0,
+  FOO = 1,
 }
