@@ -14,7 +14,7 @@ export interface FooResponse {
   foo: string
 }
 
-export class FooServiceImpl implements FooService {
+export class FooServiceClient implements FooService {
   private twirpAddr: string
   private fetch: (url: string, req?: object) => Promise<Response>
 

@@ -27,7 +27,7 @@ export interface Size {
   inches: number
 }
 
-export class HaberdasherImpl implements Haberdasher {
+export class HaberdasherClient implements Haberdasher {
   private twirpAddr: string
   private fetch: (url: string, req?: object) => Promise<Response>
 

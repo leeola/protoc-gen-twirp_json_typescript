@@ -65,7 +65,7 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 	serviceName := s.GetName()
 
 	w.P()
-	w.Pf("export class %sImpl implements %s {\n", serviceName, serviceName)
+	w.Pf("export class %sClient implements %s {\n", serviceName, serviceName)
 	w.P("  private twirpAddr: string")
 	w.P("  private fetch: (url: string, req?: object) => Promise<Response>")
 

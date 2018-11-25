@@ -12,7 +12,7 @@ export interface Bar {
   barBaz: string
 }
 
-export class FooImpl implements Foo {
+export class FooClient implements Foo {
   private twirpAddr: string
   private fetch: (url: string, req?: object) => Promise<Response>
 
