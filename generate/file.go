@@ -43,7 +43,7 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	}
 
 	for i, m := range f.GetMessageType() {
-		if err := Message(w, f, m, pathLoc.NestMessage(i)); err != nil {
+		if err := Message(w, f, "", m, pathLoc.NestMessage(i)); err != nil {
 			return fmt.Errorf("Message: %v", err)
 		}
 	}

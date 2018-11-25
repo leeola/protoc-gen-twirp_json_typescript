@@ -16,8 +16,32 @@ import (
 // TODO(leeola): convert this field to be supplied by a proto option.
 const optionalFields = true // default true for now, my pref
 
-func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.DescriptorProto, pathLoc PathLoc) error {
+func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *descriptor.DescriptorProto, pathLoc PathLoc) error {
 	packageName := file.GetPackage()
+
+	// embedded enums not yet supported
+	if enumType := m.GetEnumType(); len(enumType) > 0 {
+		return fmt.Errorf("embedded enums not yet supported")
+	}
+
+	// oneof not yet supported
+	if oneofs := m.GetOneofDecl(); len(oneofs) > 0 {
+		return fmt.Errorf("oneof not yet supported")
+	}
+
+	var messageName string
+	if prefix == "" {
+		messageName = m.GetName()
+	} else {
+		messageName = prefix + "_" + m.GetName()
+	}
+
+	nestedPrefix := messageName
+	for i, nested := range m.GetNestedType() {
+		if err := Message(w, file, nestedPrefix, nested, pathLoc.NestMessage(i)); err != nil {
+			return fmt.Errorf("Message: %v", err)
+		}
+	}
 
 	w.P()
 
@@ -25,7 +49,7 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.Desc
 		w.Pf("//%s\n", line)
 	}
 
-	w.Pf("export interface %s {\n", m.GetName())
+	w.Pf("export interface %s {\n", messageName)
 
 	for i, f := range m.GetField() {
 		fieldPathLoc := pathLoc.NestField(i)
@@ -70,7 +94,13 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, m *descriptor.Desc
 			if strings.HasPrefix(typeName, packageName) {
 				typeName = strings.TrimPrefix(typeName, packageName+".")
 			}
-			tsType = typeName
+			// replace Foo.Bar.Baz embedded type names, with
+			// underscore variants.
+			//
+			// This might behacky, but in theory dots cannot exist in type names,
+			// so if there is a dot it's an embedded usage. If a problem arrises here,
+			// a more robust solution may be needed.
+			tsType = strings.Replace(typeName, ".", "_", -1)
 		default:
 			return fmt.Errorf("unhandled type: %v", t)
 		}

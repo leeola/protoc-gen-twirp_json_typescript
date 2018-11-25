@@ -1,0 +1,15 @@
+syntax = "proto3";
+package example_009;
+
+message Foo {
+  string foo = 1;
+
+  // embedded bar type
+  message Bar {
+    // embedded type's field.
+    string bar = 1;
+  }
+
+  // field type of embedded type.
+  Bar bar = 2;
+}
