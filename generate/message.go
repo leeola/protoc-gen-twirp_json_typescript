@@ -124,10 +124,81 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *
 	return nil
 }
 
-// TSType returns the TS type string for the given proto type string.
-func TSType(protoType string) (string, error) {
-	switch protoType {
-	default:
-		return "", fmt.Errorf("unhandled proto type: %q", protoType)
+func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *descriptor.DescriptorProto) error {
+	packageName := file.GetPackage()
+
+	var messageName string
+	if prefix == "" {
+		messageName = m.GetName()
+	} else {
+		messageName = prefix + "_" + m.GetName()
 	}
+
+	nestedPrefix := messageName
+	for _, nested := range m.GetNestedType() {
+		if err := MessageJSON(w, file, nestedPrefix, nested); err != nil {
+			return fmt.Errorf("Message: %v", err)
+		}
+	}
+
+	w.P()
+	w.Pf("export function %sToJSON(t: %s): object {\n", messageName, messageName)
+	w.P("  return {")
+	for _, f := range m.GetField() {
+		fieldName := strcase.ToLowerCamel(f.GetName())
+		jsonName := f.GetName()
+		switch t := f.GetType(); t {
+		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
+			typeName := f.GetTypeName()[1:] // remove . prefix
+			log.Info().Msgf("Typename:%s, pkg:%s", typeName, packageName)
+			typeName, err := embedCase(typeName)
+			if err != nil {
+				return fmt.Errorf("embedCase: %v", err)
+			}
+			typeName = stripLocalType(packageName, typeName)
+			w.Pf("    %s: %sToJSON(t.%s),\n", jsonName, typeName, fieldName)
+		default:
+			w.Pf("    %s: t.%s,\n", jsonName, fieldName)
+		}
+	}
+	w.P("  }")
+	w.P("}")
+
+	w.Pf("export function %sFromJSON(json: any): %s {\n", messageName, messageName)
+	w.P("  return {")
+	for _, f := range m.GetField() {
+		fieldName := strcase.ToLowerCamel(f.GetName())
+		jsonName := f.GetName()
+		switch t := f.GetType(); t {
+		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
+			typeName := f.GetTypeName()[1:] // remove . prefix
+			typeName, err := embedCase(typeName)
+			if err != nil {
+				return fmt.Errorf("embedCase: %v", err)
+			}
+			typeName = stripLocalType(packageName, typeName)
+			w.Pf("    %s: %sFromJSON(json.%s),\n", fieldName, typeName, jsonName)
+		default:
+			w.Pf("    %s: json.%s,\n", fieldName, jsonName)
+		}
+	}
+	w.P("  }")
+	w.P("}")
+
+	return nil
+}
+
+// embedCase returns a pkg.Foo.Bar embed type as an underscored pkg.Foo_Bar
+func embedCase(typeName string) (string, error) {
+	split := strings.SplitN(typeName, ".", 2)
+	if len(split) != 2 {
+		return "", fmt.Errorf("unexpected type format: %q", typeName)
+	}
+	packageName := split[0]
+	typeName = strings.Replace(split[1], ".", "_", -1)
+	return fmt.Sprintf("%s.%s", packageName, typeName), nil
+}
+
+func stripLocalType(packageName, typeName string) string {
+	return strings.TrimPrefix(typeName, packageName+".")
 }

@@ -28,20 +28,33 @@ export class FooClient implements Foo {
   foo(req: Bar): Promise<Bar> {
     const url = `${this.twirpAddr}/twirp/example_006.Foo/Foo`
     const fetchReq = {
-      body: JSON.stringify(req),
+      body: JSON.stringify(BarToJSON(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
-    return this.fetch(url, fetchReq).then((res) => res.json())
+    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => BarFromJSON(j))
   }
 
   fooBar(req: Bar): Promise<Bar> {
     const url = `${this.twirpAddr}/twirp/example_006.Foo/FooBar`
     const fetchReq = {
-      body: JSON.stringify(req),
+      body: JSON.stringify(BarToJSON(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
-    return this.fetch(url, fetchReq).then((res) => res.json())
+    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => BarFromJSON(j))
+  }
+}
+
+export function BarToJSON(t: Bar): object {
+  return {
+    foo: t.foo,
+    bar_baz: t.barBaz,
+  }
+}
+export function BarFromJSON(json: any): Bar {
+  return {
+    foo: json.foo,
+    barBaz: json.bar_baz,
   }
 }

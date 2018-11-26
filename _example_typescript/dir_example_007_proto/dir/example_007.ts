@@ -9,4 +9,22 @@ export interface Foo {
   foo: string
   bar: example_001.Bar
   baz: example_008.Foo
+  bang: example_001.Foo
+}
+
+export function FooToJSON(t: Foo): object {
+  return {
+    foo: t.foo,
+    bar: t.bar,
+    baz: t.baz,
+    bang: example_001.FooToJSON(t.bang),
+  }
+}
+export function FooFromJSON(json: any): Foo {
+  return {
+    foo: json.foo,
+    bar: json.bar,
+    baz: json.baz,
+    bang: example_001.FooFromJSON(json.bang),
+  }
 }

@@ -46,7 +46,7 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 		}
 	}
 
-	// finally, implement the services.
+	// implement the services.
 	if services := f.GetService(); len(services) > 0 {
 		w.P()
 		w.P("function windowFetch(url, req) {")
@@ -57,6 +57,13 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 			if err := ServiceImplementation(w, f, s); err != nil {
 				return fmt.Errorf("Service: %v", err)
 			}
+		}
+	}
+
+	// generate json -> interface map funcs
+	for _, m := range f.GetMessageType() {
+		if err := MessageJSON(w, f, "", m); err != nil {
+			return fmt.Errorf("MessageFromJSON: %v", err)
 		}
 	}
 

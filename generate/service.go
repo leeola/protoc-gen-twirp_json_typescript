@@ -102,11 +102,11 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 		w.Pf("  %s(req: %s): Promise<%s> {\n", methodName, inputType, outputType)
 		w.Pf("    const url = `${this.twirpAddr}/twirp/%s.%s/%s`\n", filePackageName, serviceName, camelName)
 		w.P("    const fetchReq = {")
-		w.P("      body: JSON.stringify(req),")
+		w.Pf("      body: JSON.stringify(%sToJSON(req)),\n", inputType)
 		w.P("      headers: { \"Content-Type\": \"application/json\" },")
 		w.P("      method: \"POST\",")
 		w.P("    }")
-		w.P("    return this.fetch(url, fetchReq).then((res) => res.json())")
+		w.Pf("    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => %sFromJSON(j))\n", outputType)
 		w.P("  }")
 	}
 

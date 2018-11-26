@@ -7,8 +7,13 @@ service FooService {
 
 message FooRequest {
   string foo = 1;
+  Bar bar    = 2;
 }
 
 message FooResponse {
   string foo = 1;
+}
+
+message Bar {
+  string bar = 1;
 }

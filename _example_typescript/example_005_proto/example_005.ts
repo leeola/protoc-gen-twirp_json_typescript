@@ -43,10 +43,36 @@ export class HaberdasherClient implements Haberdasher {
   makeHat(req: Size): Promise<Hat> {
     const url = `${this.twirpAddr}/twirp/twitch.twirp.example.Haberdasher/MakeHat`
     const fetchReq = {
-      body: JSON.stringify(req),
+      body: JSON.stringify(SizeToJSON(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
-    return this.fetch(url, fetchReq).then((res) => res.json())
+    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => HatFromJSON(j))
+  }
+}
+
+export function HatToJSON(t: Hat): object {
+  return {
+    size: t.size,
+    color: t.color,
+    name: t.name,
+  }
+}
+export function HatFromJSON(json: any): Hat {
+  return {
+    size: json.size,
+    color: json.color,
+    name: json.name,
+  }
+}
+
+export function SizeToJSON(t: Size): object {
+  return {
+    inches: t.inches,
+  }
+}
+export function SizeFromJSON(json: any): Size {
+  return {
+    inches: json.inches,
   }
 }

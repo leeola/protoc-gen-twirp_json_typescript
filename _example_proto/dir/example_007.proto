@@ -8,4 +8,5 @@ message Foo {
   string foo          = 1;
   example_001.Bar bar = 2;
   example_008.Foo baz = 3;
+  example_001.Foo bang = 4;
 }

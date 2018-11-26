@@ -8,10 +8,15 @@ export interface FooService {
 
 export interface FooRequest {
   foo: string
+  bar: Bar
 }
 
 export interface FooResponse {
   foo: string
+}
+
+export interface Bar {
+  bar: string
 }
 
 function windowFetch(url, req) {
@@ -30,10 +35,45 @@ export class FooServiceClient implements FooService {
   foo(req: FooRequest): Promise<FooResponse> {
     const url = `${this.twirpAddr}/twirp/example_004.FooService/Foo`
     const fetchReq = {
-      body: JSON.stringify(req),
+      body: JSON.stringify(FooRequestToJSON(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
-    return this.fetch(url, fetchReq).then((res) => res.json())
+    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => FooResponseFromJSON(j))
+  }
+}
+
+export function FooRequestToJSON(t: FooRequest): object {
+  return {
+    foo: t.foo,
+    bar: BarToJSON(t.bar),
+  }
+}
+export function FooRequestFromJSON(json: any): FooRequest {
+  return {
+    foo: json.foo,
+    bar: BarFromJSON(json.bar),
+  }
+}
+
+export function FooResponseToJSON(t: FooResponse): object {
+  return {
+    foo: t.foo,
+  }
+}
+export function FooResponseFromJSON(json: any): FooResponse {
+  return {
+    foo: json.foo,
+  }
+}
+
+export function BarToJSON(t: Bar): object {
+  return {
+    bar: t.bar,
+  }
+}
+export function BarFromJSON(json: any): Bar {
+  return {
+    bar: json.bar,
   }
 }
