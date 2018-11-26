@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func File(w *Writer, f *descriptor.FileDescriptorProto) error {
+func File(w *Writer, f *descriptor.FileDescriptorProto, types Types) error {
 	log.Debug().
 		Str("file", f.GetName()).
 		Msg("generate file")
@@ -35,13 +35,13 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 	}
 
 	for _, e := range f.GetEnumType() {
-		if err := Enum(w, "", e); err != nil {
-			return fmt.Errorf("Message: %v", err)
+		if err := Enum(w, f, "", e, types); err != nil {
+			return fmt.Errorf("Enum: %v", err)
 		}
 	}
 
 	for i, m := range f.GetMessageType() {
-		if err := Message(w, f, "", m, pathLoc.NestMessage(i)); err != nil {
+		if err := Message(w, f, "", m, pathLoc.NestMessage(i), types); err != nil {
 			return fmt.Errorf("Message: %v", err)
 		}
 	}
@@ -62,7 +62,7 @@ func File(w *Writer, f *descriptor.FileDescriptorProto) error {
 
 	// generate json -> interface map funcs
 	for _, m := range f.GetMessageType() {
-		if err := MessageJSON(w, f, "", m); err != nil {
+		if err := MessageJSON(w, f, "", m, types); err != nil {
 			return fmt.Errorf("MessageFromJSON: %v", err)
 		}
 	}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+package example_010.dot.import;
+
+message Foo {
+  string foo = 1;
+
+  // embedded bar type
+  message Bar {
+    // embedded type's field.
+    string bar = 1;
+  }
+  // field type of embedded type.
+  Bar bar = 2;
+
+  enum Baz {
+    UNKNOWN = 0;
+    BAZ     = 1;
+  }
+  Baz baz = 3;
+}

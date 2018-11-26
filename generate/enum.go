@@ -4,15 +4,11 @@ import (
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 )
 
-func Enum(w *Writer, prefix string, e *descriptor.EnumDescriptorProto) error {
+func Enum(w *Writer, file *descriptor.FileDescriptorProto, parent string, e *descriptor.EnumDescriptorProto, types Types) error {
 	w.P()
 
-	var enumName string
-	if prefix == "" {
-		enumName = e.GetName()
-	} else {
-		enumName = prefix + "_" + e.GetName()
-	}
+	packageName := file.GetPackage()
+	enumName := types.SetType(packageName, parent, e.GetName()).LocalTypeName
 
 	w.Pf("export enum %s {\n", enumName)
 

@@ -14,10 +14,12 @@ func Generate(req plugin.CodeGeneratorRequest) (*plugin.CodeGeneratorResponse, e
 		Strs("files to generate", req.FileToGenerate).
 		Msg("generate request")
 
+	types := Types{}
+
 	var outputFiles []*plugin.CodeGeneratorResponse_File
 	for _, file := range req.ProtoFile {
 		var w Writer
-		if err := File(&w, file); err != nil {
+		if err := File(&w, file, types); err != nil {
 			return nil, fmt.Errorf("File: %v", err)
 		}
 

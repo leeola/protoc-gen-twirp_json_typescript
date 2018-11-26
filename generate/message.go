@@ -16,7 +16,9 @@ import (
 // TODO(leeola): convert this field to be supplied by a proto option.
 const optionalFields = true // default true for now, my pref
 
-func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *descriptor.DescriptorProto, pathLoc PathLoc) error {
+func Message(w *Writer, file *descriptor.FileDescriptorProto, parentType string, m *descriptor.DescriptorProto,
+	pathLoc PathLoc, types Types) error {
+
 	packageName := file.GetPackage()
 
 	// oneof not yet supported
@@ -24,30 +26,17 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *
 		return fmt.Errorf("oneof not yet supported")
 	}
 
-	var messageName string
-	if prefix == "" {
-		messageName = m.GetName()
-	} else {
-		messageName = prefix + "_" + m.GetName()
-	}
+	t := types.SetType(packageName, parentType, m.GetName())
+	messageName := t.LocalTypeName
 
-	typeAliases := map[string]string{}
-
-	nestedPrefix := messageName
 	for _, nested := range m.GetEnumType() {
-		nestedName := nested.GetName()
-		nestedType := messageName + "." + nestedName
-		typeAliases[nestedType] = messageName + "_" + nestedName
-		if err := Enum(w, nestedPrefix, nested); err != nil {
+		if err := Enum(w, file, t.Type, nested, types); err != nil {
 			return fmt.Errorf("Enum: %v", err)
 		}
 	}
 
 	for i, nested := range m.GetNestedType() {
-		nestedName := nested.GetName()
-		nestedType := messageName + "." + nestedName
-		typeAliases[nestedType] = messageName + "_" + nestedName
-		if err := Message(w, file, nestedPrefix, nested, pathLoc.NestMessage(i)); err != nil {
+		if err := Message(w, file, t.Type, nested, pathLoc.NestMessage(i), types); err != nil {
 			return fmt.Errorf("Message: %v", err)
 		}
 	}
@@ -99,17 +88,8 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *
 			log.Warn().Msg("TypeBytes is not yet tested")
 		case descriptor.FieldDescriptorProto_TYPE_ENUM,
 			descriptor.FieldDescriptorProto_TYPE_MESSAGE:
-			typeName := f.GetTypeName()[1:] // remove . prefix
-			if strings.HasPrefix(typeName, packageName) {
-				typeName = strings.TrimPrefix(typeName, packageName+".")
-			}
 
-			// if it's aliased, replace the type name.
-			if alias, ok := typeAliases[typeName]; ok {
-				typeName = alias
-			}
-
-			tsType = typeName
+			tsType = types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 
 		default:
 			return fmt.Errorf("unhandled type: %v", t)
@@ -124,7 +104,7 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *
 	return nil
 }
 
-func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *descriptor.DescriptorProto) error {
+func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *descriptor.DescriptorProto, types Types) error {
 	packageName := file.GetPackage()
 
 	var messageName string
@@ -136,7 +116,7 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 
 	nestedPrefix := messageName
 	for _, nested := range m.GetNestedType() {
-		if err := MessageJSON(w, file, nestedPrefix, nested); err != nil {
+		if err := MessageJSON(w, file, nestedPrefix, nested, types); err != nil {
 			return fmt.Errorf("Message: %v", err)
 		}
 	}
@@ -149,14 +129,8 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 		jsonName := f.GetName()
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
-			typeName := f.GetTypeName()[1:] // remove . prefix
-			log.Info().Msgf("Typename:%s, pkg:%s", typeName, packageName)
-			typeName, err := embedCase(typeName)
-			if err != nil {
-				return fmt.Errorf("embedCase: %v", err)
-			}
-			typeName = stripLocalType(packageName, typeName)
-			w.Pf("    %s: %sToJSON(t.%s),\n", jsonName, typeName, fieldName)
+			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
+			w.Pf("    %s: %sToJSON(t.%s),\n", jsonName, t, fieldName)
 		default:
 			w.Pf("    %s: t.%s,\n", jsonName, fieldName)
 		}
@@ -171,13 +145,8 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 		jsonName := f.GetName()
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
-			typeName := f.GetTypeName()[1:] // remove . prefix
-			typeName, err := embedCase(typeName)
-			if err != nil {
-				return fmt.Errorf("embedCase: %v", err)
-			}
-			typeName = stripLocalType(packageName, typeName)
-			w.Pf("    %s: %sFromJSON(json.%s),\n", fieldName, typeName, jsonName)
+			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
+			w.Pf("    %s: %sFromJSON(json.%s),\n", fieldName, t, jsonName)
 		default:
 			w.Pf("    %s: json.%s,\n", fieldName, jsonName)
 		}
