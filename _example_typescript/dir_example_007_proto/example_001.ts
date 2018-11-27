@@ -49,7 +49,7 @@ export function FooToJSON(t: Foo): object {
     foo_bool: t.fooBool,
     foo_bytes: t.fooBytes,
     bar: t.bar,
-    baz: BazToJSON(t.baz),
+    baz: t.baz ? BazToJSON(t.baz) : undefined,
   }
 }
 export function FooFromJSON(json: any): Foo {

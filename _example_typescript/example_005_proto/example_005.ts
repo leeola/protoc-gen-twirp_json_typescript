@@ -42,12 +42,17 @@ export class HaberdasherClient implements Haberdasher {
 
   makeHat(req: Size): Promise<Hat> {
     const url = `${this.twirpAddr}/twirp/twitch.twirp.example.Haberdasher/MakeHat`
+    // TODO: shorten this by moving it to a twirp package, reducing generated LOC
     const fetchReq = {
       body: JSON.stringify(SizeToJSON(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
-    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => HatFromJSON(j))
+    return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
+      // TODO: use TwirpError type
+      if (!res.ok) { throw new Error(j.msg) }
+      return HatFromJSON(j)
+    }))
   }
 }
 

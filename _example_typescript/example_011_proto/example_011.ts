@@ -11,8 +11,8 @@ export interface Foo {
 
 export function FooToJSON(t: Foo): object {
   return {
-    foo: example_010_dot_import.FooToJSON(t.foo),
-    bar: example_010_dot_import.Foo_BarToJSON(t.bar),
+    foo: t.foo ? example_010_dot_import.FooToJSON(t.foo) : undefined,
+    bar: t.bar ? example_010_dot_import.Foo_BarToJSON(t.bar) : undefined,
   }
 }
 export function FooFromJSON(json: any): Foo {

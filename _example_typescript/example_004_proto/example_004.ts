@@ -34,19 +34,24 @@ export class FooServiceClient implements FooService {
 
   foo(req: FooRequest): Promise<FooResponse> {
     const url = `${this.twirpAddr}/twirp/example_004.FooService/Foo`
+    // TODO: shorten this by moving it to a twirp package, reducing generated LOC
     const fetchReq = {
       body: JSON.stringify(FooRequestToJSON(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
-    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => FooResponseFromJSON(j))
+    return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
+      // TODO: use TwirpError type
+      if (!res.ok) { throw new Error(j.msg) }
+      return FooResponseFromJSON(j)
+    }))
   }
 }
 
 export function FooRequestToJSON(t: FooRequest): object {
   return {
     foo: t.foo,
-    bar: BarToJSON(t.bar),
+    bar: t.bar ? BarToJSON(t.bar) : undefined,
   }
 }
 export function FooRequestFromJSON(json: any): FooRequest {

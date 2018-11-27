@@ -17,7 +17,7 @@ export function FooToJSON(t: Foo): object {
     foo: t.foo,
     bar: t.bar,
     baz: t.baz,
-    bang: example_001.FooToJSON(t.bang),
+    bang: t.bang ? example_001.FooToJSON(t.bang) : undefined,
   }
 }
 export function FooFromJSON(json: any): Foo {

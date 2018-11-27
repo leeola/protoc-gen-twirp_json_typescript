@@ -33,7 +33,7 @@ export function Foo_BarFromJSON(json: any): Foo_Bar {
 export function FooToJSON(t: Foo): object {
   return {
     foo: t.foo,
-    bar: Foo_BarToJSON(t.bar),
+    bar: t.bar ? Foo_BarToJSON(t.bar) : undefined,
     baz: t.baz,
   }
 }

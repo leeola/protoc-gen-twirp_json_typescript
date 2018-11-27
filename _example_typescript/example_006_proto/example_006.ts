@@ -27,22 +27,32 @@ export class FooClient implements Foo {
 
   foo(req: Bar): Promise<Bar> {
     const url = `${this.twirpAddr}/twirp/example_006.Foo/Foo`
+    // TODO: shorten this by moving it to a twirp package, reducing generated LOC
     const fetchReq = {
       body: JSON.stringify(BarToJSON(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
-    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => BarFromJSON(j))
+    return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
+      // TODO: use TwirpError type
+      if (!res.ok) { throw new Error(j.msg) }
+      return BarFromJSON(j)
+    }))
   }
 
   fooBar(req: Bar): Promise<Bar> {
     const url = `${this.twirpAddr}/twirp/example_006.Foo/FooBar`
+    // TODO: shorten this by moving it to a twirp package, reducing generated LOC
     const fetchReq = {
       body: JSON.stringify(BarToJSON(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
-    return this.fetch(url, fetchReq).then((res) => res.json()).then((j) => BarFromJSON(j))
+    return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
+      // TODO: use TwirpError type
+      if (!res.ok) { throw new Error(j.msg) }
+      return BarFromJSON(j)
+    }))
   }
 }
 
