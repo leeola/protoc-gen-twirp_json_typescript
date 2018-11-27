@@ -9,6 +9,7 @@ export enum Foo_Baz {
 
 export interface Foo_Bar {
   bar?: string
+  getBar: () => string
 }
 
 export interface Foo {
@@ -17,6 +18,9 @@ export interface Foo {
   // field type of embedded type.
   bar?: Foo_Bar
   baz?: Foo_Baz
+  getFoo: () => string
+  getBar: () => Foo_Bar
+  getBaz: () => Foo_Baz
 }
 
 export function Foo_BarMarshal(t?: Foo_Bar): object {
@@ -29,6 +33,7 @@ export function Foo_BarUnmarshal(json: any): Foo_Bar {
   if (!json) { return null }
   return {
     bar: json.bar,
+    getBar: () => this.bar ? this.bar : "",
   }
 }
 
@@ -44,7 +49,10 @@ export function FooUnmarshal(json: any): Foo {
   if (!json) { return null }
   return {
     foo: json.foo,
+    getFoo: () => this.foo ? this.foo : "",
     bar: Foo_BarUnmarshal(json.bar),
+    getBar: () => this.bar ? this.bar : Foo_BarUnmarshal({}),
     baz: json.baz,
+    getBaz: () => this.baz ? this.baz : 0,
   }
 }

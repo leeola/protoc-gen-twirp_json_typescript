@@ -9,14 +9,18 @@ export interface FooService {
 export interface FooRequest {
   foo?: string
   bar?: Bar
+  getFoo: () => string
+  getBar: () => Bar
 }
 
 export interface FooResponse {
   foo?: string
+  getFoo: () => string
 }
 
 export interface Bar {
   bar?: string
+  getBar: () => string
 }
 
 function windowFetch(url, req) {
@@ -59,7 +63,9 @@ export function FooRequestUnmarshal(json: any): FooRequest {
   if (!json) { return null }
   return {
     foo: json.foo,
+    getFoo: () => this.foo ? this.foo : "",
     bar: BarUnmarshal(json.bar),
+    getBar: () => this.bar ? this.bar : BarUnmarshal({}),
   }
 }
 
@@ -73,6 +79,7 @@ export function FooResponseUnmarshal(json: any): FooResponse {
   if (!json) { return null }
   return {
     foo: json.foo,
+    getFoo: () => this.foo ? this.foo : "",
   }
 }
 
@@ -86,5 +93,6 @@ export function BarUnmarshal(json: any): Bar {
   if (!json) { return null }
   return {
     bar: json.bar,
+    getBar: () => this.bar ? this.bar : "",
   }
 }

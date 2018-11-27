@@ -88,15 +88,50 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, parentType string,
 			log.Warn().Msg("TypeBytes is not yet tested")
 		case descriptor.FieldDescriptorProto_TYPE_ENUM,
 			descriptor.FieldDescriptorProto_TYPE_MESSAGE:
-
 			tsType = types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-
 		default:
 			return fmt.Errorf("unhandled type: %v", t)
 		}
 
-		fieldName := strcase.ToLowerCamel(f.GetName())
-		w.Pf("  %s?: %s\n", fieldName, tsType)
+		fieldName := strcase.ToCamel(f.GetName())
+		lowerCamelFieldName := strcase.ToLowerCamel(fieldName)
+		w.Pf("  %s?: %s\n", lowerCamelFieldName, tsType)
+	}
+
+	for _, f := range m.GetField() {
+		var tsType string
+		switch t := f.GetType(); t {
+		case descriptor.FieldDescriptorProto_TYPE_INT32,
+			descriptor.FieldDescriptorProto_TYPE_INT64,
+			descriptor.FieldDescriptorProto_TYPE_UINT32,
+			descriptor.FieldDescriptorProto_TYPE_UINT64,
+			descriptor.FieldDescriptorProto_TYPE_SINT32,
+			descriptor.FieldDescriptorProto_TYPE_SINT64,
+			descriptor.FieldDescriptorProto_TYPE_FIXED32,
+			descriptor.FieldDescriptorProto_TYPE_FIXED64,
+			descriptor.FieldDescriptorProto_TYPE_SFIXED32,
+			descriptor.FieldDescriptorProto_TYPE_SFIXED64,
+			descriptor.FieldDescriptorProto_TYPE_FLOAT,
+			descriptor.FieldDescriptorProto_TYPE_DOUBLE:
+			tsType = "number"
+		case descriptor.FieldDescriptorProto_TYPE_STRING:
+			tsType = "string"
+		case descriptor.FieldDescriptorProto_TYPE_BOOL:
+			tsType = "boolean"
+		case descriptor.FieldDescriptorProto_TYPE_BYTES:
+			// not sure what type to represent bytes as, in JS.
+			// .. this is largely experimental, to make gogoproto work.
+			tsType = "string"
+			log.Warn().Msg("TypeBytes is not yet tested")
+		case descriptor.FieldDescriptorProto_TYPE_ENUM,
+			descriptor.FieldDescriptorProto_TYPE_MESSAGE:
+			tsType = types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
+		default:
+			return fmt.Errorf("unhandled type: %v", t)
+		}
+
+		fieldName := strcase.ToCamel(f.GetName())
+		w.Pf("  get%s: () => %s\n", fieldName, tsType)
 	}
 
 	w.P("}")
@@ -143,14 +178,43 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 	w.P("  if (!json) { return null }")
 	w.P("  return {")
 	for _, f := range m.GetField() {
-		fieldName := strcase.ToLowerCamel(f.GetName())
-		jsonName := f.GetName()
+		upperCamelFieldName := strcase.ToCamel(f.GetName())
+		lowerCamelFieldName := strcase.ToLowerCamel(upperCamelFieldName)
+		jsonName := lowerCamelFieldName
+
 		switch t := f.GetType(); t {
+		case descriptor.FieldDescriptorProto_TYPE_INT32,
+			descriptor.FieldDescriptorProto_TYPE_INT64,
+			descriptor.FieldDescriptorProto_TYPE_UINT32,
+			descriptor.FieldDescriptorProto_TYPE_UINT64,
+			descriptor.FieldDescriptorProto_TYPE_SINT32,
+			descriptor.FieldDescriptorProto_TYPE_SINT64,
+			descriptor.FieldDescriptorProto_TYPE_FIXED32,
+			descriptor.FieldDescriptorProto_TYPE_FIXED64,
+			descriptor.FieldDescriptorProto_TYPE_SFIXED32,
+			descriptor.FieldDescriptorProto_TYPE_SFIXED64,
+			descriptor.FieldDescriptorProto_TYPE_FLOAT,
+			descriptor.FieldDescriptorProto_TYPE_DOUBLE:
+			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
+			w.Pf("    get%s: () => this.%s ? this.%s : 0,\n", upperCamelFieldName, lowerCamelFieldName, lowerCamelFieldName)
+		case descriptor.FieldDescriptorProto_TYPE_STRING:
+			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
+			w.Pf("    get%s: () => this.%s ? this.%s : \"\",\n", upperCamelFieldName, lowerCamelFieldName, lowerCamelFieldName)
+		case descriptor.FieldDescriptorProto_TYPE_BOOL:
+			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
+			w.Pf("    get%s: () => this.%s ? this.%s : false,\n", upperCamelFieldName, lowerCamelFieldName, lowerCamelFieldName)
+		case descriptor.FieldDescriptorProto_TYPE_BYTES:
+			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
+			w.Pf("    get%s: () => this.%s ? this.%s : \"\",\n", upperCamelFieldName, lowerCamelFieldName, lowerCamelFieldName)
+		case descriptor.FieldDescriptorProto_TYPE_ENUM:
+			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
+			w.Pf("    get%s: () => this.%s ? this.%s : 0,\n", upperCamelFieldName, lowerCamelFieldName, lowerCamelFieldName)
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-			w.Pf("    %s: %sUnmarshal(json.%s),\n", fieldName, t, jsonName)
+			w.Pf("    %s: %sUnmarshal(json.%s),\n", lowerCamelFieldName, t, jsonName)
+			w.Pf("    get%s: () => this.%s ? this.%s : %sUnmarshal({}),\n", upperCamelFieldName, lowerCamelFieldName, lowerCamelFieldName, t)
 		default:
-			w.Pf("    %s: json.%s,\n", fieldName, jsonName)
+			return fmt.Errorf("unhandled type: %v", t)
 		}
 	}
 	w.P("  }")

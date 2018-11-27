@@ -19,12 +19,16 @@ export interface Hat {
 
   // The name of a hat is it's type. Like, 'bowler', or something.
   name?: string
+  getSize: () => number
+  getColor: () => string
+  getName: () => string
 }
 
 // Size is passed when requesting a new hat to be made. It's always
 // measured in inches.
 export interface Size {
   inches?: number
+  getInches: () => number
 }
 
 function windowFetch(url, req) {
@@ -68,8 +72,11 @@ export function HatUnmarshal(json: any): Hat {
   if (!json) { return null }
   return {
     size: json.size,
+    getSize: () => this.size ? this.size : 0,
     color: json.color,
+    getColor: () => this.color ? this.color : "",
     name: json.name,
+    getName: () => this.name ? this.name : "",
   }
 }
 
@@ -83,5 +90,6 @@ export function SizeUnmarshal(json: any): Size {
   if (!json) { return null }
   return {
     inches: json.inches,
+    getInches: () => this.inches ? this.inches : 0,
   }
 }
