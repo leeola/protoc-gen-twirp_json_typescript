@@ -25,28 +25,10 @@ export interface Foo {
   fooBytes?: string
   bar?: Bar
   baz?: Baz
-  getFooInt32: () => number
-  getFooInt64: () => number
-  getFooUint32: () => number
-  getFooUint64: () => number
-  getFooSint32: () => number
-  getFooSint64: () => number
-  getFooFixed32: () => number
-  getFooFixed64: () => number
-  getFooSfixed32: () => number
-  getFooSfixed64: () => number
-  getFooFloat: () => number
-  getFooDouble: () => number
-  getFooString: () => string
-  getFooBool: () => boolean
-  getFooBytes: () => string
-  getBar: () => Bar
-  getBaz: () => Baz
 }
 
 export interface Baz {
   baz?: string
-  getBaz: () => string
 }
 
 export function FooMarshal(t?: Foo): object | undefined {
@@ -75,40 +57,46 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   if (!json) { return undefined }
   return {
     fooInt32: json.foo_int32,
-    getFooInt32: () => this.fooInt32 ? this.fooInt32 : 0,
     fooInt64: json.foo_int64,
-    getFooInt64: () => this.fooInt64 ? this.fooInt64 : 0,
     fooUint32: json.foo_uint32,
-    getFooUint32: () => this.fooUint32 ? this.fooUint32 : 0,
     fooUint64: json.foo_uint64,
-    getFooUint64: () => this.fooUint64 ? this.fooUint64 : 0,
     fooSint32: json.foo_sint32,
-    getFooSint32: () => this.fooSint32 ? this.fooSint32 : 0,
     fooSint64: json.foo_sint64,
-    getFooSint64: () => this.fooSint64 ? this.fooSint64 : 0,
     fooFixed32: json.foo_fixed32,
-    getFooFixed32: () => this.fooFixed32 ? this.fooFixed32 : 0,
     fooFixed64: json.foo_fixed64,
-    getFooFixed64: () => this.fooFixed64 ? this.fooFixed64 : 0,
     fooSfixed32: json.foo_sfixed32,
-    getFooSfixed32: () => this.fooSfixed32 ? this.fooSfixed32 : 0,
     fooSfixed64: json.foo_sfixed64,
-    getFooSfixed64: () => this.fooSfixed64 ? this.fooSfixed64 : 0,
     fooFloat: json.foo_float,
-    getFooFloat: () => this.fooFloat ? this.fooFloat : 0,
     fooDouble: json.foo_double,
-    getFooDouble: () => this.fooDouble ? this.fooDouble : 0,
     fooString: json.foo_string,
-    getFooString: () => this.fooString ? this.fooString : "",
     fooBool: json.foo_bool,
-    getFooBool: () => this.fooBool ? this.fooBool : false,
     fooBytes: json.foo_bytes,
-    getFooBytes: () => this.fooBytes ? this.fooBytes : "",
     bar: json.bar,
-    getBar: () => this.bar ? this.bar : 0,
     baz: BazUnmarshal(json.baz),
-    getBaz: () => this.baz ? this.baz : BazUnmarshal({}),
   }
+}
+export class FooGetter {
+  public Foo: Foo
+  constructor(o: Foo) {
+    this.Foo = o
+  }
+  getFooInt32 = () => this.Foo.fooInt32 ? this.Foo.fooInt32 : 0
+  getFooInt64 = () => this.Foo.fooInt64 ? this.Foo.fooInt64 : 0
+  getFooUint32 = () => this.Foo.fooUint32 ? this.Foo.fooUint32 : 0
+  getFooUint64 = () => this.Foo.fooUint64 ? this.Foo.fooUint64 : 0
+  getFooSint32 = () => this.Foo.fooSint32 ? this.Foo.fooSint32 : 0
+  getFooSint64 = () => this.Foo.fooSint64 ? this.Foo.fooSint64 : 0
+  getFooFixed32 = () => this.Foo.fooFixed32 ? this.Foo.fooFixed32 : 0
+  getFooFixed64 = () => this.Foo.fooFixed64 ? this.Foo.fooFixed64 : 0
+  getFooSfixed32 = () => this.Foo.fooSfixed32 ? this.Foo.fooSfixed32 : 0
+  getFooSfixed64 = () => this.Foo.fooSfixed64 ? this.Foo.fooSfixed64 : 0
+  getFooFloat = () => this.Foo.fooFloat ? this.Foo.fooFloat : 0
+  getFooDouble = () => this.Foo.fooDouble ? this.Foo.fooDouble : 0
+  getFooString = () => this.Foo.fooString ? this.Foo.fooString : ""
+  getFooBool = () => this.Foo.fooBool ? this.Foo.fooBool : false
+  getFooBytes = () => this.Foo.fooBytes ? this.Foo.fooBytes : ""
+  getBar = () => this.Foo.bar ? this.Foo.bar : 0
+  getBaz = () => this.Foo.baz ? this.Foo.baz : BazUnmarshal({})
 }
 
 export function BazMarshal(t?: Baz): object | undefined {
@@ -121,6 +109,12 @@ export function BazUnmarshal(this: any, json: any): Baz | undefined {
   if (!json) { return undefined }
   return {
     baz: json.baz,
-    getBaz: () => this.baz ? this.baz : "",
   }
+}
+export class BazGetter {
+  public Baz: Baz
+  constructor(o: Baz) {
+    this.Baz = o
+  }
+  getBaz = () => this.Baz.baz ? this.Baz.baz : ""
 }

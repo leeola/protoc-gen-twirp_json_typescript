@@ -8,8 +8,6 @@ import * as example_003 from "./dir/example_003"
 export interface Foo {
   bar001?: example_001.Bar
   foo003?: example_003.Foo
-  getBar001: () => example_001.Bar
-  getFoo003: () => example_003.Foo
 }
 
 export function FooMarshal(t?: Foo): object | undefined {
@@ -23,8 +21,14 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   if (!json) { return undefined }
   return {
     bar001: json.bar_001,
-    getBar001: () => this.bar001 ? this.bar001 : 0,
     foo003: json.foo_003,
-    getFoo003: () => this.foo003 ? this.foo003 : 0,
   }
+}
+export class FooGetter {
+  public Foo: Foo
+  constructor(o: Foo) {
+    this.Foo = o
+  }
+  getBar001 = () => this.Foo.bar001 ? this.Foo.bar001 : 0
+  getFoo003 = () => this.Foo.foo003 ? this.Foo.foo003 : 0
 }

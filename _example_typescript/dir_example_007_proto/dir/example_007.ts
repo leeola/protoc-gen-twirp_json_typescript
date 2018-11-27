@@ -10,10 +10,6 @@ export interface Foo {
   bar?: example_001.Bar
   baz?: example_008.Foo
   bang?: example_001.Foo
-  getFoo: () => string
-  getBar: () => example_001.Bar
-  getBaz: () => example_008.Foo
-  getBang: () => example_001.Foo
 }
 
 export function FooMarshal(t?: Foo): object | undefined {
@@ -29,12 +25,18 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   if (!json) { return undefined }
   return {
     foo: json.foo,
-    getFoo: () => this.foo ? this.foo : "",
     bar: json.bar,
-    getBar: () => this.bar ? this.bar : 0,
     baz: json.baz,
-    getBaz: () => this.baz ? this.baz : 0,
     bang: example_001.FooUnmarshal(json.bang),
-    getBang: () => this.bang ? this.bang : example_001.FooUnmarshal({}),
   }
+}
+export class FooGetter {
+  public Foo: Foo
+  constructor(o: Foo) {
+    this.Foo = o
+  }
+  getFoo = () => this.Foo.foo ? this.Foo.foo : ""
+  getBar = () => this.Foo.bar ? this.Foo.bar : 0
+  getBaz = () => this.Foo.baz ? this.Foo.baz : 0
+  getBang = () => this.Foo.bang ? this.Foo.bang : example_001.FooUnmarshal({})
 }

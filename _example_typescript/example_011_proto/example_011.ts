@@ -7,8 +7,6 @@ import * as example_010_dot_import from "./example_010"
 export interface Foo {
   foo?: example_010_dot_import.Foo
   bar?: example_010_dot_import.Foo_Bar
-  getFoo: () => example_010_dot_import.Foo
-  getBar: () => example_010_dot_import.Foo_Bar
 }
 
 export function FooMarshal(t?: Foo): object | undefined {
@@ -22,8 +20,14 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   if (!json) { return undefined }
   return {
     foo: example_010_dot_import.FooUnmarshal(json.foo),
-    getFoo: () => this.foo ? this.foo : example_010_dot_import.FooUnmarshal({}),
     bar: example_010_dot_import.Foo_BarUnmarshal(json.bar),
-    getBar: () => this.bar ? this.bar : example_010_dot_import.Foo_BarUnmarshal({}),
   }
+}
+export class FooGetter {
+  public Foo: Foo
+  constructor(o: Foo) {
+    this.Foo = o
+  }
+  getFoo = () => this.Foo.foo ? this.Foo.foo : example_010_dot_import.FooUnmarshal({})
+  getBar = () => this.Foo.bar ? this.Foo.bar : example_010_dot_import.Foo_BarUnmarshal({})
 }

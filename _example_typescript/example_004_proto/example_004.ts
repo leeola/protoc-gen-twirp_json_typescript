@@ -9,18 +9,14 @@ export interface FooService {
 export interface FooRequest {
   foo?: string
   bar?: Bar
-  getFoo: () => string
-  getBar: () => Bar
 }
 
 export interface FooResponse {
   foo?: string
-  getFoo: () => string
 }
 
 export interface Bar {
   bar?: string
-  getBar: () => string
 }
 
 function windowFetch(url, req) {
@@ -65,10 +61,16 @@ export function FooRequestUnmarshal(this: any, json: any): FooRequest | undefine
   if (!json) { return undefined }
   return {
     foo: json.foo,
-    getFoo: () => this.foo ? this.foo : "",
     bar: BarUnmarshal(json.bar),
-    getBar: () => this.bar ? this.bar : BarUnmarshal({}),
   }
+}
+export class FooRequestGetter {
+  public FooRequest: FooRequest
+  constructor(o: FooRequest) {
+    this.FooRequest = o
+  }
+  getFoo = () => this.FooRequest.foo ? this.FooRequest.foo : ""
+  getBar = () => this.FooRequest.bar ? this.FooRequest.bar : BarUnmarshal({})
 }
 
 export function FooResponseMarshal(t?: FooResponse): object | undefined {
@@ -81,8 +83,14 @@ export function FooResponseUnmarshal(this: any, json: any): FooResponse | undefi
   if (!json) { return undefined }
   return {
     foo: json.foo,
-    getFoo: () => this.foo ? this.foo : "",
   }
+}
+export class FooResponseGetter {
+  public FooResponse: FooResponse
+  constructor(o: FooResponse) {
+    this.FooResponse = o
+  }
+  getFoo = () => this.FooResponse.foo ? this.FooResponse.foo : ""
 }
 
 export function BarMarshal(t?: Bar): object | undefined {
@@ -95,6 +103,12 @@ export function BarUnmarshal(this: any, json: any): Bar | undefined {
   if (!json) { return undefined }
   return {
     bar: json.bar,
-    getBar: () => this.bar ? this.bar : "",
   }
+}
+export class BarGetter {
+  public Bar: Bar
+  constructor(o: Bar) {
+    this.Bar = o
+  }
+  getBar = () => this.Bar.bar ? this.Bar.bar : ""
 }

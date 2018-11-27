@@ -19,16 +19,12 @@ export interface Hat {
 
   // The name of a hat is it's type. Like, 'bowler', or something.
   name?: string
-  getSize: () => number
-  getColor: () => string
-  getName: () => string
 }
 
 // Size is passed when requesting a new hat to be made. It's always
 // measured in inches.
 export interface Size {
   inches?: number
-  getInches: () => number
 }
 
 function windowFetch(url, req) {
@@ -74,12 +70,18 @@ export function HatUnmarshal(this: any, json: any): Hat | undefined {
   if (!json) { return undefined }
   return {
     size: json.size,
-    getSize: () => this.size ? this.size : 0,
     color: json.color,
-    getColor: () => this.color ? this.color : "",
     name: json.name,
-    getName: () => this.name ? this.name : "",
   }
+}
+export class HatGetter {
+  public Hat: Hat
+  constructor(o: Hat) {
+    this.Hat = o
+  }
+  getSize = () => this.Hat.size ? this.Hat.size : 0
+  getColor = () => this.Hat.color ? this.Hat.color : ""
+  getName = () => this.Hat.name ? this.Hat.name : ""
 }
 
 export function SizeMarshal(t?: Size): object | undefined {
@@ -92,6 +94,12 @@ export function SizeUnmarshal(this: any, json: any): Size | undefined {
   if (!json) { return undefined }
   return {
     inches: json.inches,
-    getInches: () => this.inches ? this.inches : 0,
   }
+}
+export class SizeGetter {
+  public Size: Size
+  constructor(o: Size) {
+    this.Size = o
+  }
+  getInches = () => this.Size.inches ? this.Size.inches : 0
 }

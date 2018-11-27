@@ -10,8 +10,6 @@ export interface Foo {
 export interface Bar {
   foo?: string
   barBaz?: string
-  getFoo: () => string
-  getBarBaz: () => string
 }
 
 function windowFetch(url, req) {
@@ -73,8 +71,14 @@ export function BarUnmarshal(this: any, json: any): Bar | undefined {
   if (!json) { return undefined }
   return {
     foo: json.foo,
-    getFoo: () => this.foo ? this.foo : "",
     barBaz: json.bar_baz,
-    getBarBaz: () => this.barBaz ? this.barBaz : "",
   }
+}
+export class BarGetter {
+  public Bar: Bar
+  constructor(o: Bar) {
+    this.Bar = o
+  }
+  getFoo = () => this.Bar.foo ? this.Bar.foo : ""
+  getBarBaz = () => this.Bar.barBaz ? this.Bar.barBaz : ""
 }

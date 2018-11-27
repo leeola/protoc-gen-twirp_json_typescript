@@ -9,7 +9,6 @@ export enum Foo_Baz {
 
 export interface Foo_Bar {
   bar?: string
-  getBar: () => string
 }
 
 export interface Foo {
@@ -18,9 +17,6 @@ export interface Foo {
   // field type of embedded type.
   bar?: Foo_Bar
   baz?: Foo_Baz
-  getFoo: () => string
-  getBar: () => Foo_Bar
-  getBaz: () => Foo_Baz
 }
 
 export function Foo_BarMarshal(t?: Foo_Bar): object | undefined {
@@ -33,8 +29,14 @@ export function Foo_BarUnmarshal(this: any, json: any): Foo_Bar | undefined {
   if (!json) { return undefined }
   return {
     bar: json.bar,
-    getBar: () => this.bar ? this.bar : "",
   }
+}
+export class Foo_BarGetter {
+  public Foo_Bar: Foo_Bar
+  constructor(o: Foo_Bar) {
+    this.Foo_Bar = o
+  }
+  getBar = () => this.Foo_Bar.bar ? this.Foo_Bar.bar : ""
 }
 
 export function FooMarshal(t?: Foo): object | undefined {
@@ -49,10 +51,16 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   if (!json) { return undefined }
   return {
     foo: json.foo,
-    getFoo: () => this.foo ? this.foo : "",
     bar: Foo_BarUnmarshal(json.bar),
-    getBar: () => this.bar ? this.bar : Foo_BarUnmarshal({}),
     baz: json.baz,
-    getBaz: () => this.baz ? this.baz : 0,
   }
+}
+export class FooGetter {
+  public Foo: Foo
+  constructor(o: Foo) {
+    this.Foo = o
+  }
+  getFoo = () => this.Foo.foo ? this.Foo.foo : ""
+  getBar = () => this.Foo.bar ? this.Foo.bar : Foo_BarUnmarshal({})
+  getBaz = () => this.Foo.baz ? this.Foo.baz : 0
 }
