@@ -93,6 +93,10 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, parentType string,
 			return fmt.Errorf("unhandled type: %v", t)
 		}
 
+		if f.GetLabel() == descriptor.FieldDescriptorProto_LABEL_REPEATED {
+			tsType += "[]"
+		}
+
 		fieldName := strcase.ToCamel(f.GetName())
 		lowerCamelFieldName := strcase.ToLowerCamel(fieldName)
 		w.Pf("  %s?: %s\n", lowerCamelFieldName, tsType)
@@ -129,10 +133,18 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 		fieldName := strcase.ToLowerCamel(protoFieldName)
 		jsonName := protoFieldName
 
+		repeated := f.GetLabel() == descriptor.FieldDescriptorProto_LABEL_REPEATED
+
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-			w.Pf("    %s: %sMarshal(t.%s),\n", jsonName, t, fieldName)
+			if !repeated {
+				w.Pf("    %s: %sMarshal(t.%s),\n", jsonName, t, fieldName)
+			} else {
+				listMap := fmt.Sprintf("t.%s.map((elm) => %sMarshal(elm))", fieldName, t)
+				nullsafe := fmt.Sprintf("t.%s ? %s : undefined", fieldName, listMap)
+				w.Pf("    %s: %s,\n", jsonName, nullsafe)
+			}
 		default:
 			w.Pf("    %s: t.%s,\n", jsonName, fieldName)
 		}
@@ -149,33 +161,20 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 		lowerCamelFieldName := strcase.ToLowerCamel(upperCamelFieldName)
 		jsonName := protoFieldName
 
+		repeated := f.GetLabel() == descriptor.FieldDescriptorProto_LABEL_REPEATED
+
 		switch t := f.GetType(); t {
-		case descriptor.FieldDescriptorProto_TYPE_INT32,
-			descriptor.FieldDescriptorProto_TYPE_INT64,
-			descriptor.FieldDescriptorProto_TYPE_UINT32,
-			descriptor.FieldDescriptorProto_TYPE_UINT64,
-			descriptor.FieldDescriptorProto_TYPE_SINT32,
-			descriptor.FieldDescriptorProto_TYPE_SINT64,
-			descriptor.FieldDescriptorProto_TYPE_FIXED32,
-			descriptor.FieldDescriptorProto_TYPE_FIXED64,
-			descriptor.FieldDescriptorProto_TYPE_SFIXED32,
-			descriptor.FieldDescriptorProto_TYPE_SFIXED64,
-			descriptor.FieldDescriptorProto_TYPE_FLOAT,
-			descriptor.FieldDescriptorProto_TYPE_DOUBLE:
-			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
-		case descriptor.FieldDescriptorProto_TYPE_STRING:
-			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
-		case descriptor.FieldDescriptorProto_TYPE_BOOL:
-			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
-		case descriptor.FieldDescriptorProto_TYPE_BYTES:
-			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
-		case descriptor.FieldDescriptorProto_TYPE_ENUM:
-			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-			w.Pf("    %s: %sUnmarshal(json.%s),\n", lowerCamelFieldName, t, jsonName)
+			if !repeated {
+				w.Pf("    %s: %sUnmarshal(json.%s),\n", lowerCamelFieldName, t, jsonName)
+			} else {
+				listMap := fmt.Sprintf("json.%s.map((elm) => %sUnmarshal(elm))", jsonName, t)
+				nullsafe := fmt.Sprintf("json.%s ? %s : undefined", jsonName, listMap)
+				w.Pf("    %s: %s,\n", lowerCamelFieldName, nullsafe)
+			}
 		default:
-			return fmt.Errorf("unhandled type: %v", t)
+			w.Pf("    %s: json.%s,\n", lowerCamelFieldName, jsonName)
 		}
 	}
 	w.P("  }")

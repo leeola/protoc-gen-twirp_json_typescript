@@ -8,23 +8,40 @@ enum Bar {
 }
 
 message Foo {
-  int32 foo_int32       = 1;
-  int64 foo_int64       = 2;
-  uint32 foo_uint32     = 3;
-  uint64 foo_uint64     = 4;
-  sint32 foo_sint32     = 5;
-  sint64 foo_sint64     = 6;
-  fixed32 foo_fixed32   = 7;
-  fixed64 foo_fixed64   = 8;
-  sfixed32 foo_sfixed32 = 9;
-  sfixed64 foo_sfixed64 = 10;
-  float foo_float       = 11;
-  double foo_double     = 12;
-  string foo_string     = 13;
-  bool foo_bool         = 14;
-  bytes foo_bytes       = 15;
-  Bar bar               = 16;
-  Baz baz               = 17;
+  int32 foo_int32                 = 1;
+  int64 foo_int64                 = 2;
+  uint32 foo_uint32               = 3;
+  uint64 foo_uint64               = 4;
+  sint32 foo_sint32               = 5;
+  sint64 foo_sint64               = 6;
+  fixed32 foo_fixed32             = 7;
+  fixed64 foo_fixed64             = 8;
+  sfixed32 foo_sfixed32           = 9;
+  sfixed64 foo_sfixed64           = 10;
+  float foo_float                 = 11;
+  double foo_double               = 12;
+  string foo_string               = 13;
+  bool foo_bool                   = 14;
+  bytes foo_bytes                 = 15;
+  Bar bar                         = 16;
+  Baz baz                         = 17;
+  repeated int32 foo_int32s       = 18;
+  repeated int64 foo_int64s       = 19;
+  repeated uint32 foo_uint32s     = 20;
+  repeated uint64 foo_uint64s     = 21;
+  repeated sint32 foo_sint32s     = 22;
+  repeated sint64 foo_sint64s     = 23;
+  repeated fixed32 foo_fixed32s   = 24;
+  repeated fixed64 foo_fixed64s   = 25;
+  repeated sfixed32 foo_sfixed32s = 26;
+  repeated sfixed64 foo_sfixed64s = 27;
+  repeated float foo_floats       = 28;
+  repeated double foo_doubles     = 29;
+  repeated string foo_strings     = 30;
+  repeated bool foo_bools         = 31;
+  repeated bytes foo_bytess       = 32;
+  repeated Bar bars               = 33;
+  repeated Baz bazs               = 34;
 }
 
 message Baz {
