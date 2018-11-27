@@ -22,9 +22,9 @@ export function FooMarshal(t?: Foo): object | undefined {
 export function FooUnmarshal(this: any, json: any): Foo | undefined {
   if (!json) { return undefined }
   return {
-    bar001: json.bar001,
+    bar001: json.bar_001,
     getBar001: () => this.bar001 ? this.bar001 : 0,
-    foo003: json.foo003,
+    foo003: json.foo_003,
     getFoo003: () => this.foo003 ? this.foo003 : 0,
   }
 }

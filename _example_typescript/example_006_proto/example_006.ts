@@ -74,7 +74,7 @@ export function BarUnmarshal(this: any, json: any): Bar | undefined {
   return {
     foo: json.foo,
     getFoo: () => this.foo ? this.foo : "",
-    barBaz: json.barBaz,
+    barBaz: json.bar_baz,
     getBarBaz: () => this.barBaz ? this.barBaz : "",
   }
 }

@@ -161,8 +161,10 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 	w.P("  if (!t) { return undefined }")
 	w.P("  return {")
 	for _, f := range m.GetField() {
-		fieldName := strcase.ToLowerCamel(f.GetName())
-		jsonName := f.GetName()
+		protoFieldName := f.GetName()
+		fieldName := strcase.ToLowerCamel(protoFieldName)
+		jsonName := protoFieldName
+
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
@@ -178,9 +180,10 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 	w.P("  if (!json) { return undefined }")
 	w.P("  return {")
 	for _, f := range m.GetField() {
-		upperCamelFieldName := strcase.ToCamel(f.GetName())
+		protoFieldName := f.GetName()
+		upperCamelFieldName := strcase.ToCamel(protoFieldName)
 		lowerCamelFieldName := strcase.ToLowerCamel(upperCamelFieldName)
-		jsonName := lowerCamelFieldName
+		jsonName := protoFieldName
 
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_INT32,
