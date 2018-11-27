@@ -8,30 +8,31 @@ export enum Bar {
 }
 
 export interface Foo {
-  fooInt32: number
-  fooInt64: number
-  fooUint32: number
-  fooUint64: number
-  fooSint32: number
-  fooSint64: number
-  fooFixed32: number
-  fooFixed64: number
-  fooSfixed32: number
-  fooSfixed64: number
-  fooFloat: number
-  fooDouble: number
-  fooString: string
-  fooBool: boolean
-  fooBytes: string
-  bar: Bar
-  baz: Baz
+  fooInt32?: number
+  fooInt64?: number
+  fooUint32?: number
+  fooUint64?: number
+  fooSint32?: number
+  fooSint64?: number
+  fooFixed32?: number
+  fooFixed64?: number
+  fooSfixed32?: number
+  fooSfixed64?: number
+  fooFloat?: number
+  fooDouble?: number
+  fooString?: string
+  fooBool?: boolean
+  fooBytes?: string
+  bar?: Bar
+  baz?: Baz
 }
 
 export interface Baz {
-  baz: string
+  baz?: string
 }
 
-export function FooToJSON(t: Foo): object {
+export function FooMarshal(t?: Foo): object {
+  if (!t) { return null }
   return {
     foo_int32: t.fooInt32,
     foo_int64: t.fooInt64,
@@ -49,10 +50,11 @@ export function FooToJSON(t: Foo): object {
     foo_bool: t.fooBool,
     foo_bytes: t.fooBytes,
     bar: t.bar,
-    baz: t.baz ? BazToJSON(t.baz) : undefined,
+    baz: BazMarshal(t.baz),
   }
 }
-export function FooFromJSON(json: any): Foo {
+export function FooUnmarshal(json: any): Foo {
+  if (!json) { return null }
   return {
     fooInt32: json.foo_int32,
     fooInt64: json.foo_int64,
@@ -70,16 +72,18 @@ export function FooFromJSON(json: any): Foo {
     fooBool: json.foo_bool,
     fooBytes: json.foo_bytes,
     bar: json.bar,
-    baz: BazFromJSON(json.baz),
+    baz: BazUnmarshal(json.baz),
   }
 }
 
-export function BazToJSON(t: Baz): object {
+export function BazMarshal(t?: Baz): object {
+  if (!t) { return null }
   return {
     baz: t.baz,
   }
 }
-export function BazFromJSON(json: any): Baz {
+export function BazUnmarshal(json: any): Baz {
+  if (!json) { return null }
   return {
     baz: json.baz,
   }

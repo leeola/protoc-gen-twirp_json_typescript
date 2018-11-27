@@ -11,20 +11,20 @@ export interface Haberdasher {
 // A Hat is a piece of headwear made by a Haberdasher.
 export interface Hat {
   // The size of a hat should always be in inches.
-  size: number
+  size?: number
 
   // The color of a hat will never be 'invisible', but other than
   // that, anything is fair game.
-  color: string
+  color?: string
 
   // The name of a hat is it's type. Like, 'bowler', or something.
-  name: string
+  name?: string
 }
 
 // Size is passed when requesting a new hat to be made. It's always
 // measured in inches.
 export interface Size {
-  inches: number
+  inches?: number
 }
 
 function windowFetch(url, req) {
@@ -44,26 +44,28 @@ export class HaberdasherClient implements Haberdasher {
     const url = `${this.twirpAddr}/twirp/twitch.twirp.example.Haberdasher/MakeHat`
     // TODO: shorten this by moving it to a twirp package, reducing generated LOC
     const fetchReq = {
-      body: JSON.stringify(SizeToJSON(req)),
+      body: JSON.stringify(SizeMarshal(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
     return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
       // TODO: use TwirpError type
       if (!res.ok) { throw new Error(j.msg) }
-      return HatFromJSON(j)
+      return HatUnmarshal(j)
     }))
   }
 }
 
-export function HatToJSON(t: Hat): object {
+export function HatMarshal(t?: Hat): object {
+  if (!t) { return null }
   return {
     size: t.size,
     color: t.color,
     name: t.name,
   }
 }
-export function HatFromJSON(json: any): Hat {
+export function HatUnmarshal(json: any): Hat {
+  if (!json) { return null }
   return {
     size: json.size,
     color: json.color,
@@ -71,12 +73,14 @@ export function HatFromJSON(json: any): Hat {
   }
 }
 
-export function SizeToJSON(t: Size): object {
+export function SizeMarshal(t?: Size): object {
+  if (!t) { return null }
   return {
     inches: t.inches,
   }
 }
-export function SizeFromJSON(json: any): Size {
+export function SizeUnmarshal(json: any): Size {
+  if (!json) { return null }
   return {
     inches: json.inches,
   }

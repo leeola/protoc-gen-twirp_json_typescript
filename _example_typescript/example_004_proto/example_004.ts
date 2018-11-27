@@ -7,16 +7,16 @@ export interface FooService {
 }
 
 export interface FooRequest {
-  foo: string
-  bar: Bar
+  foo?: string
+  bar?: Bar
 }
 
 export interface FooResponse {
-  foo: string
+  foo?: string
 }
 
 export interface Bar {
-  bar: string
+  bar?: string
 }
 
 function windowFetch(url, req) {
@@ -36,48 +36,54 @@ export class FooServiceClient implements FooService {
     const url = `${this.twirpAddr}/twirp/example_004.FooService/Foo`
     // TODO: shorten this by moving it to a twirp package, reducing generated LOC
     const fetchReq = {
-      body: JSON.stringify(FooRequestToJSON(req)),
+      body: JSON.stringify(FooRequestMarshal(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
     return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
       // TODO: use TwirpError type
       if (!res.ok) { throw new Error(j.msg) }
-      return FooResponseFromJSON(j)
+      return FooResponseUnmarshal(j)
     }))
   }
 }
 
-export function FooRequestToJSON(t: FooRequest): object {
+export function FooRequestMarshal(t?: FooRequest): object {
+  if (!t) { return null }
   return {
     foo: t.foo,
-    bar: t.bar ? BarToJSON(t.bar) : undefined,
+    bar: BarMarshal(t.bar),
   }
 }
-export function FooRequestFromJSON(json: any): FooRequest {
+export function FooRequestUnmarshal(json: any): FooRequest {
+  if (!json) { return null }
   return {
     foo: json.foo,
-    bar: BarFromJSON(json.bar),
+    bar: BarUnmarshal(json.bar),
   }
 }
 
-export function FooResponseToJSON(t: FooResponse): object {
+export function FooResponseMarshal(t?: FooResponse): object {
+  if (!t) { return null }
   return {
     foo: t.foo,
   }
 }
-export function FooResponseFromJSON(json: any): FooResponse {
+export function FooResponseUnmarshal(json: any): FooResponse {
+  if (!json) { return null }
   return {
     foo: json.foo,
   }
 }
 
-export function BarToJSON(t: Bar): object {
+export function BarMarshal(t?: Bar): object {
+  if (!t) { return null }
   return {
     bar: t.bar,
   }
 }
-export function BarFromJSON(json: any): Bar {
+export function BarUnmarshal(json: any): Bar {
+  if (!json) { return null }
   return {
     bar: json.bar,
   }

@@ -96,7 +96,7 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, parentType string,
 		}
 
 		fieldName := strcase.ToLowerCamel(f.GetName())
-		w.Pf("  %s: %s\n", fieldName, tsType)
+		w.Pf("  %s?: %s\n", fieldName, tsType)
 	}
 
 	w.P("}")
@@ -122,7 +122,8 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 	}
 
 	w.P()
-	w.Pf("export function %sToJSON(t: %s): object {\n", messageName, messageName)
+	w.Pf("export function %sMarshal(t?: %s): object {\n", messageName, messageName)
+	w.P("  if (!t) { return null }")
 	w.P("  return {")
 	for _, f := range m.GetField() {
 		fieldName := strcase.ToLowerCamel(f.GetName())
@@ -130,7 +131,7 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-			w.Pf("    %s: t.%s ? %sToJSON(t.%s) : undefined,\n", jsonName, fieldName, t, fieldName)
+			w.Pf("    %s: %sMarshal(t.%s),\n", jsonName, t, fieldName)
 		default:
 			w.Pf("    %s: t.%s,\n", jsonName, fieldName)
 		}
@@ -138,7 +139,8 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 	w.P("  }")
 	w.P("}")
 
-	w.Pf("export function %sFromJSON(json: any): %s {\n", messageName, messageName)
+	w.Pf("export function %sUnmarshal(json: any): %s {\n", messageName, messageName)
+	w.P("  if (!json) { return null }")
 	w.P("  return {")
 	for _, f := range m.GetField() {
 		fieldName := strcase.ToLowerCamel(f.GetName())
@@ -146,7 +148,7 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-			w.Pf("    %s: %sFromJSON(json.%s),\n", fieldName, t, jsonName)
+			w.Pf("    %s: %sUnmarshal(json.%s),\n", fieldName, t, jsonName)
 		default:
 			w.Pf("    %s: json.%s,\n", fieldName, jsonName)
 		}

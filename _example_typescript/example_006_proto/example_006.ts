@@ -8,8 +8,8 @@ export interface Foo {
 }
 
 export interface Bar {
-  foo: string
-  barBaz: string
+  foo?: string
+  barBaz?: string
 }
 
 function windowFetch(url, req) {
@@ -29,14 +29,14 @@ export class FooClient implements Foo {
     const url = `${this.twirpAddr}/twirp/example_006.Foo/Foo`
     // TODO: shorten this by moving it to a twirp package, reducing generated LOC
     const fetchReq = {
-      body: JSON.stringify(BarToJSON(req)),
+      body: JSON.stringify(BarMarshal(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
     return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
       // TODO: use TwirpError type
       if (!res.ok) { throw new Error(j.msg) }
-      return BarFromJSON(j)
+      return BarUnmarshal(j)
     }))
   }
 
@@ -44,25 +44,27 @@ export class FooClient implements Foo {
     const url = `${this.twirpAddr}/twirp/example_006.Foo/FooBar`
     // TODO: shorten this by moving it to a twirp package, reducing generated LOC
     const fetchReq = {
-      body: JSON.stringify(BarToJSON(req)),
+      body: JSON.stringify(BarMarshal(req)),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     }
     return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
       // TODO: use TwirpError type
       if (!res.ok) { throw new Error(j.msg) }
-      return BarFromJSON(j)
+      return BarUnmarshal(j)
     }))
   }
 }
 
-export function BarToJSON(t: Bar): object {
+export function BarMarshal(t?: Bar): object {
+  if (!t) { return null }
   return {
     foo: t.foo,
     bar_baz: t.barBaz,
   }
 }
-export function BarFromJSON(json: any): Bar {
+export function BarUnmarshal(json: any): Bar {
+  if (!json) { return null }
   return {
     foo: json.foo,
     barBaz: json.bar_baz,
