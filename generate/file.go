@@ -62,7 +62,7 @@ func File(w *Writer, f *descriptor.FileDescriptorProto, types Types, pkgs map[st
 
 	// generate json -> interface map funcs
 	for _, m := range f.GetMessageType() {
-		if err := MessageJSON(w, f, "", m, types); err != nil {
+		if err := MessageMarshal(w, f, "", m, types); err != nil {
 			return fmt.Errorf("MessageFromJSON: %v", err)
 		}
 	}

@@ -139,7 +139,7 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, parentType string,
 	return nil
 }
 
-func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *descriptor.DescriptorProto, types Types) error {
+func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix string, m *descriptor.DescriptorProto, types Types) error {
 	packageName := file.GetPackage()
 
 	var messageName string
@@ -151,7 +151,7 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 
 	nestedPrefix := messageName
 	for _, nested := range m.GetNestedType() {
-		if err := MessageJSON(w, file, nestedPrefix, nested, types); err != nil {
+		if err := MessageMarshal(w, file, nestedPrefix, nested, types); err != nil {
 			return fmt.Errorf("Message: %v", err)
 		}
 	}
