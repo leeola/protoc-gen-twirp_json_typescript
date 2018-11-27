@@ -12,15 +12,15 @@ export interface Foo {
   getFoo003: () => example_003.Foo
 }
 
-export function FooMarshal(t?: Foo): object {
-  if (!t) { return null }
+export function FooMarshal(t?: Foo): object | undefined {
+  if (!t) { return undefined }
   return {
     bar_001: t.bar001,
     foo_003: t.foo003,
   }
 }
-export function FooUnmarshal(json: any): Foo {
-  if (!json) { return null }
+export function FooUnmarshal(this: any, json: any): Foo | undefined {
+  if (!json) { return undefined }
   return {
     bar001: json.bar001,
     getBar001: () => this.bar001 ? this.bar001 : 0,

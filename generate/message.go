@@ -157,8 +157,8 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 	}
 
 	w.P()
-	w.Pf("export function %sMarshal(t?: %s): object {\n", messageName, messageName)
-	w.P("  if (!t) { return null }")
+	w.Pf("export function %sMarshal(t?: %s): object | undefined {\n", messageName, messageName)
+	w.P("  if (!t) { return undefined }")
 	w.P("  return {")
 	for _, f := range m.GetField() {
 		fieldName := strcase.ToLowerCamel(f.GetName())
@@ -174,8 +174,8 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 	w.P("  }")
 	w.P("}")
 
-	w.Pf("export function %sUnmarshal(json: any): %s {\n", messageName, messageName)
-	w.P("  if (!json) { return null }")
+	w.Pf("export function %sUnmarshal(this: any, json: any): %s | undefined {\n", messageName, messageName)
+	w.P("  if (!json) { return undefined }")
 	w.P("  return {")
 	for _, f := range m.GetField() {
 		upperCamelFieldName := strcase.ToCamel(f.GetName())

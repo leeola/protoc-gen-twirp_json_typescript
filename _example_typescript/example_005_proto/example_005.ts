@@ -55,21 +55,23 @@ export class HaberdasherClient implements Haberdasher {
     return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
       // TODO: use TwirpError type
       if (!res.ok) { throw new Error(j.msg) }
-      return HatUnmarshal(j)
+      const v = HatUnmarshal(j)
+      if (!v) { throw new Error("makeHat response was undefined") }
+      return v
     }))
   }
 }
 
-export function HatMarshal(t?: Hat): object {
-  if (!t) { return null }
+export function HatMarshal(t?: Hat): object | undefined {
+  if (!t) { return undefined }
   return {
     size: t.size,
     color: t.color,
     name: t.name,
   }
 }
-export function HatUnmarshal(json: any): Hat {
-  if (!json) { return null }
+export function HatUnmarshal(this: any, json: any): Hat | undefined {
+  if (!json) { return undefined }
   return {
     size: json.size,
     getSize: () => this.size ? this.size : 0,
@@ -80,14 +82,14 @@ export function HatUnmarshal(json: any): Hat {
   }
 }
 
-export function SizeMarshal(t?: Size): object {
-  if (!t) { return null }
+export function SizeMarshal(t?: Size): object | undefined {
+  if (!t) { return undefined }
   return {
     inches: t.inches,
   }
 }
-export function SizeUnmarshal(json: any): Size {
-  if (!json) { return null }
+export function SizeUnmarshal(this: any, json: any): Size | undefined {
+  if (!json) { return undefined }
   return {
     inches: json.inches,
     getInches: () => this.inches ? this.inches : 0,

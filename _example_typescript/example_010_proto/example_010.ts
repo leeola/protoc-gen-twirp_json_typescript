@@ -23,30 +23,30 @@ export interface Foo {
   getBaz: () => Foo_Baz
 }
 
-export function Foo_BarMarshal(t?: Foo_Bar): object {
-  if (!t) { return null }
+export function Foo_BarMarshal(t?: Foo_Bar): object | undefined {
+  if (!t) { return undefined }
   return {
     bar: t.bar,
   }
 }
-export function Foo_BarUnmarshal(json: any): Foo_Bar {
-  if (!json) { return null }
+export function Foo_BarUnmarshal(this: any, json: any): Foo_Bar | undefined {
+  if (!json) { return undefined }
   return {
     bar: json.bar,
     getBar: () => this.bar ? this.bar : "",
   }
 }
 
-export function FooMarshal(t?: Foo): object {
-  if (!t) { return null }
+export function FooMarshal(t?: Foo): object | undefined {
+  if (!t) { return undefined }
   return {
     foo: t.foo,
     bar: Foo_BarMarshal(t.bar),
     baz: t.baz,
   }
 }
-export function FooUnmarshal(json: any): Foo {
-  if (!json) { return null }
+export function FooUnmarshal(this: any, json: any): Foo | undefined {
+  if (!json) { return undefined }
   return {
     foo: json.foo,
     getFoo: () => this.foo ? this.foo : "",

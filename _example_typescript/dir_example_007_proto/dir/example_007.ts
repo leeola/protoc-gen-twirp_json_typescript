@@ -16,8 +16,8 @@ export interface Foo {
   getBang: () => example_001.Foo
 }
 
-export function FooMarshal(t?: Foo): object {
-  if (!t) { return null }
+export function FooMarshal(t?: Foo): object | undefined {
+  if (!t) { return undefined }
   return {
     foo: t.foo,
     bar: t.bar,
@@ -25,8 +25,8 @@ export function FooMarshal(t?: Foo): object {
     bang: example_001.FooMarshal(t.bang),
   }
 }
-export function FooUnmarshal(json: any): Foo {
-  if (!json) { return null }
+export function FooUnmarshal(this: any, json: any): Foo | undefined {
+  if (!json) { return undefined }
   return {
     foo: json.foo,
     getFoo: () => this.foo ? this.foo : "",

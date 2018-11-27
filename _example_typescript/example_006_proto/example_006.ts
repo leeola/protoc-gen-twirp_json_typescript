@@ -38,7 +38,9 @@ export class FooClient implements Foo {
     return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
       // TODO: use TwirpError type
       if (!res.ok) { throw new Error(j.msg) }
-      return BarUnmarshal(j)
+      const v = BarUnmarshal(j)
+      if (!v) { throw new Error("foo response was undefined") }
+      return v
     }))
   }
 
@@ -53,20 +55,22 @@ export class FooClient implements Foo {
     return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
       // TODO: use TwirpError type
       if (!res.ok) { throw new Error(j.msg) }
-      return BarUnmarshal(j)
+      const v = BarUnmarshal(j)
+      if (!v) { throw new Error("fooBar response was undefined") }
+      return v
     }))
   }
 }
 
-export function BarMarshal(t?: Bar): object {
-  if (!t) { return null }
+export function BarMarshal(t?: Bar): object | undefined {
+  if (!t) { return undefined }
   return {
     foo: t.foo,
     bar_baz: t.barBaz,
   }
 }
-export function BarUnmarshal(json: any): Bar {
-  if (!json) { return null }
+export function BarUnmarshal(this: any, json: any): Bar | undefined {
+  if (!json) { return undefined }
   return {
     foo: json.foo,
     getFoo: () => this.foo ? this.foo : "",

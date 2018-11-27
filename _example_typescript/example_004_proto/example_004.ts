@@ -47,20 +47,22 @@ export class FooServiceClient implements FooService {
     return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {
       // TODO: use TwirpError type
       if (!res.ok) { throw new Error(j.msg) }
-      return FooResponseUnmarshal(j)
+      const v = FooResponseUnmarshal(j)
+      if (!v) { throw new Error("foo response was undefined") }
+      return v
     }))
   }
 }
 
-export function FooRequestMarshal(t?: FooRequest): object {
-  if (!t) { return null }
+export function FooRequestMarshal(t?: FooRequest): object | undefined {
+  if (!t) { return undefined }
   return {
     foo: t.foo,
     bar: BarMarshal(t.bar),
   }
 }
-export function FooRequestUnmarshal(json: any): FooRequest {
-  if (!json) { return null }
+export function FooRequestUnmarshal(this: any, json: any): FooRequest | undefined {
+  if (!json) { return undefined }
   return {
     foo: json.foo,
     getFoo: () => this.foo ? this.foo : "",
@@ -69,28 +71,28 @@ export function FooRequestUnmarshal(json: any): FooRequest {
   }
 }
 
-export function FooResponseMarshal(t?: FooResponse): object {
-  if (!t) { return null }
+export function FooResponseMarshal(t?: FooResponse): object | undefined {
+  if (!t) { return undefined }
   return {
     foo: t.foo,
   }
 }
-export function FooResponseUnmarshal(json: any): FooResponse {
-  if (!json) { return null }
+export function FooResponseUnmarshal(this: any, json: any): FooResponse | undefined {
+  if (!json) { return undefined }
   return {
     foo: json.foo,
     getFoo: () => this.foo ? this.foo : "",
   }
 }
 
-export function BarMarshal(t?: Bar): object {
-  if (!t) { return null }
+export function BarMarshal(t?: Bar): object | undefined {
+  if (!t) { return undefined }
   return {
     bar: t.bar,
   }
 }
-export function BarUnmarshal(json: any): Bar {
-  if (!json) { return null }
+export function BarUnmarshal(this: any, json: any): Bar | undefined {
+  if (!json) { return undefined }
   return {
     bar: json.bar,
     getBar: () => this.bar ? this.bar : "",

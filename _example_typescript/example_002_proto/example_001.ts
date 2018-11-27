@@ -49,8 +49,8 @@ export interface Baz {
   getBaz: () => string
 }
 
-export function FooMarshal(t?: Foo): object {
-  if (!t) { return null }
+export function FooMarshal(t?: Foo): object | undefined {
+  if (!t) { return undefined }
   return {
     foo_int32: t.fooInt32,
     foo_int64: t.fooInt64,
@@ -71,8 +71,8 @@ export function FooMarshal(t?: Foo): object {
     baz: BazMarshal(t.baz),
   }
 }
-export function FooUnmarshal(json: any): Foo {
-  if (!json) { return null }
+export function FooUnmarshal(this: any, json: any): Foo | undefined {
+  if (!json) { return undefined }
   return {
     fooInt32: json.fooInt32,
     getFooInt32: () => this.fooInt32 ? this.fooInt32 : 0,
@@ -111,14 +111,14 @@ export function FooUnmarshal(json: any): Foo {
   }
 }
 
-export function BazMarshal(t?: Baz): object {
-  if (!t) { return null }
+export function BazMarshal(t?: Baz): object | undefined {
+  if (!t) { return undefined }
   return {
     baz: t.baz,
   }
 }
-export function BazUnmarshal(json: any): Baz {
-  if (!json) { return null }
+export function BazUnmarshal(this: any, json: any): Baz | undefined {
+  if (!json) { return undefined }
   return {
     baz: json.baz,
     getBaz: () => this.baz ? this.baz : "",

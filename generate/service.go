@@ -110,7 +110,9 @@ func ServiceImplementation(w *Writer, f *descriptor.FileDescriptorProto, s *desc
 		w.P("    return this.fetch(url, fetchReq).then((res) => res.json().then((j) => {")
 		w.P("      // TODO: use TwirpError type")
 		w.P("      if (!res.ok) { throw new Error(j.msg) }")
-		w.Pf("      return %sUnmarshal(j)\n", outputType)
+		w.Pf("      const v = %sUnmarshal(j)\n", outputType)
+		w.Pf("      if (!v) { throw new Error(\"%s response was undefined\") }\n", methodName)
+		w.P("      return v")
 		w.P("    }))")
 		w.P("  }")
 	}
