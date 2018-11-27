@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func File(w *Writer, f *descriptor.FileDescriptorProto, types Types) error {
+func File(w *Writer, f *descriptor.FileDescriptorProto, types Types, pkgs map[string]string) error {
 	log.Debug().
 		Str("file", f.GetName()).
 		Msg("generate file")
@@ -20,7 +20,7 @@ func File(w *Writer, f *descriptor.FileDescriptorProto, types Types) error {
 
 	if deps := f.GetDependency(); len(deps) > 0 {
 		w.P()
-		if err := Dependencies(w, f, deps); err != nil {
+		if err := Dependencies(w, f, deps, pkgs); err != nil {
 			return fmt.Errorf("Dependencies: %v", err)
 		}
 	}

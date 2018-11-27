@@ -8,7 +8,7 @@ import (
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 )
 
-func Dependencies(w *Writer, f *descriptor.FileDescriptorProto, depPaths []string) error {
+func Dependencies(w *Writer, f *descriptor.FileDescriptorProto, depPaths []string, pkgs map[string]string) error {
 	usedTypes, err := PossibleFileImports(f)
 	if err != nil {
 		return fmt.Errorf("FileTypes: %v", err)
@@ -23,7 +23,7 @@ func Dependencies(w *Writer, f *descriptor.FileDescriptorProto, depPaths []strin
 			}
 		}
 
-		if err := Dependency(w, f, depPath, inUse); err != nil {
+		if err := Dependency(w, f, depPath, inUse, pkgs); err != nil {
 			return fmt.Errorf("Dependency: %v", err)
 		}
 	}
@@ -31,8 +31,8 @@ func Dependencies(w *Writer, f *descriptor.FileDescriptorProto, depPaths []strin
 	return nil
 }
 
-func Dependency(w *Writer, f *descriptor.FileDescriptorProto, depPath string, inUse bool) error {
-	depName := TSImportName(depPath)
+func Dependency(w *Writer, f *descriptor.FileDescriptorProto, depPath string, inUse bool, pkgs map[string]string) error {
+	depName := TSImportName(pkgs[depPath])
 
 	relPath, err := filepath.Rel(filepath.Dir(f.GetName()), DropExt(depPath))
 	if err != nil {
@@ -80,9 +80,8 @@ func messageImports(types []string, m *descriptor.DescriptorProto) []string {
 
 // TSImportName returns the typescript importname from the protoc dependency
 // value.
-func TSImportName(depPath string) string {
-	depPath = DropExt(depPath)
-	return filepath.Base(depPath)
+func TSImportName(depPackage string) string {
+	return strings.Replace(depPackage, ".", "_", -1)
 }
 
 // TSExt will replace the ext with a .ts extension.

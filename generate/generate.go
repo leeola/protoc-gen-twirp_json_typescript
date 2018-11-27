@@ -16,10 +16,15 @@ func Generate(req plugin.CodeGeneratorRequest) (*plugin.CodeGeneratorResponse, e
 
 	types := Types{}
 
+	pkgs := map[string]string{}
+	for _, file := range req.ProtoFile {
+		pkgs[file.GetName()] = file.GetPackage()
+	}
+
 	var outputFiles []*plugin.CodeGeneratorResponse_File
 	for _, file := range req.ProtoFile {
 		var w Writer
-		if err := File(&w, file, types); err != nil {
+		if err := File(&w, file, types, pkgs); err != nil {
 			return nil, fmt.Errorf("File: %v", err)
 		}
 
