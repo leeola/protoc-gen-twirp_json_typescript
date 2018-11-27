@@ -130,7 +130,7 @@ func MessageJSON(w *Writer, file *descriptor.FileDescriptorProto, prefix string,
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-			w.Pf("    %s: %sToJSON(t.%s),\n", jsonName, t, fieldName)
+			w.Pf("    %s: t.%s ? %sToJSON(t.%s) : undefined,\n", jsonName, fieldName, t, fieldName)
 		default:
 			w.Pf("    %s: t.%s,\n", jsonName, fieldName)
 		}
