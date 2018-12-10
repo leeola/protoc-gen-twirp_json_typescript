@@ -3,8 +3,8 @@
 //
 
 export enum Bar {
-  UNKNOWN = 0,
-  BAR_FOO = 1,
+  UNKNOWN = "UNKNOWN",
+  BAR_FOO = "BAR_FOO",
 }
 
 export interface Foo {
@@ -66,7 +66,7 @@ export function FooMarshal(t?: Foo): object | undefined {
     foo_string: t.fooString,
     foo_bool: t.fooBool,
     foo_bytes: t.fooBytes,
-    bar: t.bar,
+    bar: t.bar ? Bar[t.bar] : undefined,
     baz: BazMarshal(t.baz),
     foo_int32s: t.fooInt32S,
     foo_int64s: t.fooInt64S,
@@ -83,7 +83,7 @@ export function FooMarshal(t?: Foo): object | undefined {
     foo_strings: t.fooStrings,
     foo_bools: t.fooBools,
     foo_bytess: t.fooBytess,
-    bars: t.bars,
+    bars: t.bars ? t.bars.map((elm) => Bar[elm]) : undefined,
     bazs: t.bazs ? t.bazs.map((elm) => BazMarshal(elm)) : undefined,
   }
 }
@@ -105,7 +105,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
     fooString: json.foo_string,
     fooBool: json.foo_bool,
     fooBytes: json.foo_bytes,
-    bar: Number(Bar[json.bar]),
+    bar: json.bar,
     baz: BazUnmarshal(json.baz),
     fooInt32S: json.foo_int32s,
     fooInt64S: json.foo_int64s,
@@ -122,7 +122,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
     fooStrings: json.foo_strings,
     fooBools: json.foo_bools,
     fooBytess: json.foo_bytess,
-    bars: json.bars ? json.bars.map((elm) => Number(Bar[elm])) : undefined,
+    bars: json.bars,
     bazs: json.bazs ? json.bazs.map((elm) => BazUnmarshal(elm)) : undefined,
   }
 }
@@ -207,8 +207,8 @@ export class FooGetter {
     return this.Foo.fooBytes
   }
   getBar: () => Bar = () => {
-    if (!this.Foo) { return 0 }
-    if (!this.Foo.bar) { return 0 }
+    if (!this.Foo) { return Bar[Bar[0]] }
+    if (!this.Foo.bar) { return Bar[Bar[0]] }
     return this.Foo.bar
   }
   getBaz: () => Baz = () => {

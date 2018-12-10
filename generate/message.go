@@ -136,6 +136,15 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 		repeated := f.GetLabel() == descriptor.FieldDescriptorProto_LABEL_REPEATED
 
 		switch t := f.GetType(); t {
+		case descriptor.FieldDescriptorProto_TYPE_ENUM:
+			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
+			if !repeated {
+				w.Pf("    %s: t.%s ? %s[t.%s] : undefined,\n", jsonName, fieldName, t, fieldName)
+			} else {
+				listMap := fmt.Sprintf("t.%s.map((elm) => %s[elm])", fieldName, t)
+				nullsafe := fmt.Sprintf("t.%s ? %s : undefined", fieldName, listMap)
+				w.Pf("    %s: %s,\n", jsonName, nullsafe)
+			}
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 			if !repeated {
@@ -164,14 +173,6 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 		repeated := f.GetLabel() == descriptor.FieldDescriptorProto_LABEL_REPEATED
 
 		switch t := f.GetType(); t {
-		case descriptor.FieldDescriptorProto_TYPE_ENUM:
-			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-			if !repeated {
-				w.Pf("    %s: Number(%s[json.%s]),\n", lowerCamelFieldName, t, jsonName)
-			} else {
-				listMap := fmt.Sprintf("json.%s.map((elm) => Number(%s[elm]))", jsonName, t)
-				w.Pf("    %s: json.%s ? %s : undefined,\n", lowerCamelFieldName, jsonName, listMap)
-			}
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 			if !repeated {
@@ -247,7 +248,7 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 			if !repeated {
 				m["typeName"] = t
-				m["zeroValue"] = "return 0"
+				m["zeroValue"] = fmt.Sprintf("return %s[%s[0]]", t, t)
 			} else {
 				m["typeName"] = t + "[]"
 				m["zeroValue"] = "return []"

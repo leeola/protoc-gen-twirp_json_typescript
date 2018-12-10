@@ -3,6 +3,6 @@
 //
 
 export enum Foo {
-  UNKOWN = 0,
-  FOO = 1,
+  UNKOWN = "UNKOWN",
+  FOO = "FOO",
 }

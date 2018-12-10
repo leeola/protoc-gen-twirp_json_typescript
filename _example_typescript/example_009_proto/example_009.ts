@@ -3,8 +3,8 @@
 //
 
 export enum Foo_Baz {
-  UNKNOWN = 0,
-  BAZ = 1,
+  UNKNOWN = "UNKNOWN",
+  BAZ = "BAZ",
 }
 
 export interface Foo_Bar {
@@ -48,7 +48,7 @@ export function FooMarshal(t?: Foo): object | undefined {
   return {
     foo: t.foo,
     bar: Foo_BarMarshal(t.bar),
-    baz: t.baz,
+    baz: t.baz ? Foo_Baz[t.baz] : undefined,
   }
 }
 export function FooUnmarshal(this: any, json: any): Foo | undefined {
@@ -56,7 +56,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   return {
     foo: json.foo,
     bar: Foo_BarUnmarshal(json.bar),
-    baz: Number(Foo_Baz[json.baz]),
+    baz: json.baz,
   }
 }
 export class FooGetter {
@@ -75,8 +75,8 @@ export class FooGetter {
     return this.Foo.bar
   }
   getBaz: () => Foo_Baz = () => {
-    if (!this.Foo) { return 0 }
-    if (!this.Foo.baz) { return 0 }
+    if (!this.Foo) { return Foo_Baz[Foo_Baz[0]] }
+    if (!this.Foo.baz) { return Foo_Baz[Foo_Baz[0]] }
     return this.Foo.baz
   }
 }

@@ -13,7 +13,7 @@ func Enum(w *Writer, file *descriptor.FileDescriptorProto, parent string, e *des
 	w.Pf("export enum %s {\n", enumName)
 
 	for _, v := range e.GetValue() {
-		w.Pf("  %s = %d,\n", v.GetName(), v.GetNumber())
+		w.Pf("  %s = \"%s\",\n", v.GetName(), v.GetName())
 	}
 
 	w.P("}")
