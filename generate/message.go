@@ -181,7 +181,7 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 	w.P("}")
 
 	w.Pf("export class %sGetter {\n", messageName)
-	w.Pf("  public %s: %s\n", messageName, messageName)
+	w.Pf("  public %s: %s | undefined\n", messageName, messageName)
 	w.Pf("  constructor(o?: %s) {\n", messageName)
 	w.Pf("    this.%s = o\n", messageName)
 	w.P("  }")

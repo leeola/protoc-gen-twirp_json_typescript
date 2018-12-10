@@ -127,7 +127,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   }
 }
 export class FooGetter {
-  public Foo: Foo
+  public Foo: Foo | undefined
   constructor(o?: Foo) {
     this.Foo = o
   }
@@ -180,7 +180,7 @@ export function BazUnmarshal(this: any, json: any): Baz | undefined {
   }
 }
 export class BazGetter {
-  public Baz: Baz
+  public Baz: Baz | undefined
   constructor(o?: Baz) {
     this.Baz = o
   }

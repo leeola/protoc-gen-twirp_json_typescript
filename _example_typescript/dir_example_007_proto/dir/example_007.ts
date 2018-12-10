@@ -31,7 +31,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   }
 }
 export class FooGetter {
-  public Foo: Foo
+  public Foo: Foo | undefined
   constructor(o?: Foo) {
     this.Foo = o
   }

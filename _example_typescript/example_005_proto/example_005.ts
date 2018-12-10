@@ -75,7 +75,7 @@ export function HatUnmarshal(this: any, json: any): Hat | undefined {
   }
 }
 export class HatGetter {
-  public Hat: Hat
+  public Hat: Hat | undefined
   constructor(o?: Hat) {
     this.Hat = o
   }
@@ -97,7 +97,7 @@ export function SizeUnmarshal(this: any, json: any): Size | undefined {
   }
 }
 export class SizeGetter {
-  public Size: Size
+  public Size: Size | undefined
   constructor(o?: Size) {
     this.Size = o
   }

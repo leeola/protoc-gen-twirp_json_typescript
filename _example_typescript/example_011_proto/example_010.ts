@@ -32,7 +32,7 @@ export function Foo_BarUnmarshal(this: any, json: any): Foo_Bar | undefined {
   }
 }
 export class Foo_BarGetter {
-  public Foo_Bar: Foo_Bar
+  public Foo_Bar: Foo_Bar | undefined
   constructor(o?: Foo_Bar) {
     this.Foo_Bar = o
   }
@@ -56,7 +56,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   }
 }
 export class FooGetter {
-  public Foo: Foo
+  public Foo: Foo | undefined
   constructor(o?: Foo) {
     this.Foo = o
   }

@@ -65,7 +65,7 @@ export function FooRequestUnmarshal(this: any, json: any): FooRequest | undefine
   }
 }
 export class FooRequestGetter {
-  public FooRequest: FooRequest
+  public FooRequest: FooRequest | undefined
   constructor(o?: FooRequest) {
     this.FooRequest = o
   }
@@ -86,7 +86,7 @@ export function FooResponseUnmarshal(this: any, json: any): FooResponse | undefi
   }
 }
 export class FooResponseGetter {
-  public FooResponse: FooResponse
+  public FooResponse: FooResponse | undefined
   constructor(o?: FooResponse) {
     this.FooResponse = o
   }
@@ -106,7 +106,7 @@ export function BarUnmarshal(this: any, json: any): Bar | undefined {
   }
 }
 export class BarGetter {
-  public Bar: Bar
+  public Bar: Bar | undefined
   constructor(o?: Bar) {
     this.Bar = o
   }

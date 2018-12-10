@@ -75,7 +75,7 @@ export function BarUnmarshal(this: any, json: any): Bar | undefined {
   }
 }
 export class BarGetter {
-  public Bar: Bar
+  public Bar: Bar | undefined
   constructor(o?: Bar) {
     this.Bar = o
   }
