@@ -20,8 +20,8 @@ export function FooMarshal(t?: Foo): object | undefined {
 export function FooUnmarshal(this: any, json: any): Foo | undefined {
   if (!json) { return undefined }
   return {
-    bar001: json.bar_001,
-    foo003: json.foo_003,
+    bar001: Number(example_001.Bar[json.bar_001]),
+    foo003: Number(example_003.Foo[json.foo_003]),
   }
 }
 export class FooGetter {

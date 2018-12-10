@@ -105,7 +105,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
     fooString: json.foo_string,
     fooBool: json.foo_bool,
     fooBytes: json.foo_bytes,
-    bar: json.bar,
+    bar: Number(Bar[json.bar]),
     baz: BazUnmarshal(json.baz),
     fooInt32S: json.foo_int32s,
     fooInt64S: json.foo_int64s,
@@ -122,7 +122,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
     fooStrings: json.foo_strings,
     fooBools: json.foo_bools,
     fooBytess: json.foo_bytess,
-    bars: json.bars,
+    bars: json.bars ? json.bars.map((elm) => Number(Bar[elm])) : undefined,
     bazs: json.bazs ? json.bazs.map((elm) => BazUnmarshal(elm)) : undefined,
   }
 }

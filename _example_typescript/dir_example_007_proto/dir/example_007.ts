@@ -25,8 +25,8 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   if (!json) { return undefined }
   return {
     foo: json.foo,
-    bar: json.bar,
-    baz: json.baz,
+    bar: Number(example_001.Bar[json.bar]),
+    baz: Number(example_008.Foo[json.baz]),
     bang: example_001.FooUnmarshal(json.bang),
   }
 }

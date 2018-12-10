@@ -164,6 +164,14 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 		repeated := f.GetLabel() == descriptor.FieldDescriptorProto_LABEL_REPEATED
 
 		switch t := f.GetType(); t {
+		case descriptor.FieldDescriptorProto_TYPE_ENUM:
+			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
+			if !repeated {
+				w.Pf("    %s: Number(%s[json.%s]),\n", lowerCamelFieldName, t, jsonName)
+			} else {
+				listMap := fmt.Sprintf("json.%s.map((elm) => Number(%s[elm]))", jsonName, t)
+				w.Pf("    %s: json.%s ? %s : undefined,\n", lowerCamelFieldName, jsonName, listMap)
+			}
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 			if !repeated {

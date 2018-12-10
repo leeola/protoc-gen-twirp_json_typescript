@@ -56,7 +56,7 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
   return {
     foo: json.foo,
     bar: Foo_BarUnmarshal(json.bar),
-    baz: json.baz,
+    baz: Number(Foo_Baz[json.baz]),
   }
 }
 export class FooGetter {
