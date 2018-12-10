@@ -1,8 +1,10 @@
 package generate
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
+	"text/template"
 
 	"github.com/gogo/protobuf/proto"
 	plugin "github.com/golang/protobuf/protoc-gen-go/plugin"
@@ -70,4 +72,16 @@ func (w *Writer) Printf(f string, a ...interface{}) (int, error) {
 
 func (w *Writer) Println(a ...interface{}) (int, error) {
 	return w.WriteString(fmt.Sprintln(a...))
+}
+
+func (w *Writer) T(t string, m map[string]interface{}) (int, error) {
+	tmpl, err := template.New("").Parse(t)
+	if err != nil {
+		return 0, fmt.Errorf("template Parse: %v", err)
+	}
+	var buf = bytes.Buffer{}
+	if err := tmpl.Execute(&buf, m); err != nil {
+		return 0, fmt.Errorf("template Execute: %v", err)
+	}
+	return w.WriteString(buf.String())
 }

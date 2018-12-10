@@ -32,11 +32,11 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
 }
 export class FooGetter {
   public Foo: Foo
-  constructor(o: Foo) {
+  constructor(o?: Foo) {
     this.Foo = o
   }
-  getFoo = () => this.Foo.foo ? this.Foo.foo : ""
-  getBar = () => this.Foo.bar ? this.Foo.bar : 0
-  getBaz = () => this.Foo.baz ? this.Foo.baz : 0
-  getBang = () => this.Foo.bang ? this.Foo.bang : example_001.FooUnmarshal({})
+  getFoo: () => string = () => { if (!this.Foo) { return "" }; return this.Foo.foo ? this.Foo.foo : "" }
+  getBar: () => example_001.Bar = () => { if (!this.Foo) { return 0 }; return this.Foo.bar ? this.Foo.bar : 0 }
+  getBaz: () => example_008.Foo = () => { if (!this.Foo) { return 0 }; return this.Foo.baz ? this.Foo.baz : 0 }
+  getBang: () => example_001.Foo = () => { if (!this.Foo) { return example_001.FooUnmarshal({}) }; return this.Foo.bang ? this.Foo.bang : example_001.FooUnmarshal({}) }
 }

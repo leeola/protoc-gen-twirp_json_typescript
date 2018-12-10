@@ -76,9 +76,9 @@ export function BarUnmarshal(this: any, json: any): Bar | undefined {
 }
 export class BarGetter {
   public Bar: Bar
-  constructor(o: Bar) {
+  constructor(o?: Bar) {
     this.Bar = o
   }
-  getFoo = () => this.Bar.foo ? this.Bar.foo : ""
-  getBarBaz = () => this.Bar.barBaz ? this.Bar.barBaz : ""
+  getFoo: () => string = () => { if (!this.Bar) { return "" }; return this.Bar.foo ? this.Bar.foo : "" }
+  getBarBaz: () => string = () => { if (!this.Bar) { return "" }; return this.Bar.barBaz ? this.Bar.barBaz : "" }
 }

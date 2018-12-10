@@ -66,11 +66,11 @@ export function FooRequestUnmarshal(this: any, json: any): FooRequest | undefine
 }
 export class FooRequestGetter {
   public FooRequest: FooRequest
-  constructor(o: FooRequest) {
+  constructor(o?: FooRequest) {
     this.FooRequest = o
   }
-  getFoo = () => this.FooRequest.foo ? this.FooRequest.foo : ""
-  getBar = () => this.FooRequest.bar ? this.FooRequest.bar : BarUnmarshal({})
+  getFoo: () => string = () => { if (!this.FooRequest) { return "" }; return this.FooRequest.foo ? this.FooRequest.foo : "" }
+  getBar: () => Bar = () => { if (!this.FooRequest) { return BarUnmarshal({}) }; return this.FooRequest.bar ? this.FooRequest.bar : BarUnmarshal({}) }
 }
 
 export function FooResponseMarshal(t?: FooResponse): object | undefined {
@@ -87,10 +87,10 @@ export function FooResponseUnmarshal(this: any, json: any): FooResponse | undefi
 }
 export class FooResponseGetter {
   public FooResponse: FooResponse
-  constructor(o: FooResponse) {
+  constructor(o?: FooResponse) {
     this.FooResponse = o
   }
-  getFoo = () => this.FooResponse.foo ? this.FooResponse.foo : ""
+  getFoo: () => string = () => { if (!this.FooResponse) { return "" }; return this.FooResponse.foo ? this.FooResponse.foo : "" }
 }
 
 export function BarMarshal(t?: Bar): object | undefined {
@@ -107,8 +107,8 @@ export function BarUnmarshal(this: any, json: any): Bar | undefined {
 }
 export class BarGetter {
   public Bar: Bar
-  constructor(o: Bar) {
+  constructor(o?: Bar) {
     this.Bar = o
   }
-  getBar = () => this.Bar.bar ? this.Bar.bar : ""
+  getBar: () => string = () => { if (!this.Bar) { return "" }; return this.Bar.bar ? this.Bar.bar : "" }
 }

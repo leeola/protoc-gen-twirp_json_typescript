@@ -76,12 +76,12 @@ export function HatUnmarshal(this: any, json: any): Hat | undefined {
 }
 export class HatGetter {
   public Hat: Hat
-  constructor(o: Hat) {
+  constructor(o?: Hat) {
     this.Hat = o
   }
-  getSize = () => this.Hat.size ? this.Hat.size : 0
-  getColor = () => this.Hat.color ? this.Hat.color : ""
-  getName = () => this.Hat.name ? this.Hat.name : ""
+  getSize: () => number = () => { if (!this.Hat) { return 0 }; return this.Hat.size ? this.Hat.size : 0 }
+  getColor: () => string = () => { if (!this.Hat) { return "" }; return this.Hat.color ? this.Hat.color : "" }
+  getName: () => string = () => { if (!this.Hat) { return "" }; return this.Hat.name ? this.Hat.name : "" }
 }
 
 export function SizeMarshal(t?: Size): object | undefined {
@@ -98,8 +98,8 @@ export function SizeUnmarshal(this: any, json: any): Size | undefined {
 }
 export class SizeGetter {
   public Size: Size
-  constructor(o: Size) {
+  constructor(o?: Size) {
     this.Size = o
   }
-  getInches = () => this.Size.inches ? this.Size.inches : 0
+  getInches: () => number = () => { if (!this.Size) { return 0 }; return this.Size.inches ? this.Size.inches : 0 }
 }

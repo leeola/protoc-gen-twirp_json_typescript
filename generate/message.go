@@ -182,13 +182,21 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 
 	w.Pf("export class %sGetter {\n", messageName)
 	w.Pf("  public %s: %s\n", messageName, messageName)
-	w.Pf("  constructor(o: %s) {\n", messageName)
+	w.Pf("  constructor(o?: %s) {\n", messageName)
 	w.Pf("    this.%s = o\n", messageName)
 	w.P("  }")
 	for _, f := range m.GetField() {
 		protoFieldName := f.GetName()
 		upperCamelFieldName := strcase.ToCamel(protoFieldName)
 		lowerCamelFieldName := strcase.ToLowerCamel(upperCamelFieldName)
+
+		repeated := f.GetLabel() == descriptor.FieldDescriptorProto_LABEL_REPEATED
+
+		m := map[string]interface{}{
+			"messageName":         messageName,
+			"lowerCamelFieldName": lowerCamelFieldName,
+			"upperCamelFieldName": upperCamelFieldName,
+		}
 
 		switch t := f.GetType(); t {
 		case descriptor.FieldDescriptorProto_TYPE_INT32,
@@ -203,26 +211,57 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 			descriptor.FieldDescriptorProto_TYPE_SFIXED64,
 			descriptor.FieldDescriptorProto_TYPE_FLOAT,
 			descriptor.FieldDescriptorProto_TYPE_DOUBLE:
-			w.Pf("  get%s = () => this.%s.%s ? this.%s.%s : 0\n",
-				upperCamelFieldName, messageName, lowerCamelFieldName, messageName, lowerCamelFieldName)
-		case descriptor.FieldDescriptorProto_TYPE_STRING:
-			w.Pf("  get%s = () => this.%s.%s ? this.%s.%s : \"\"\n",
-				upperCamelFieldName, messageName, lowerCamelFieldName, messageName, lowerCamelFieldName)
+			if !repeated {
+				m["typeName"] = "number"
+				m["zeroValue"] = "0"
+			} else {
+				m["typeName"] = "number[]"
+				m["zeroValue"] = "[]"
+			}
+		case descriptor.FieldDescriptorProto_TYPE_STRING,
+			descriptor.FieldDescriptorProto_TYPE_BYTES:
+			if !repeated {
+				m["typeName"] = "string"
+				m["zeroValue"] = `""`
+			} else {
+				m["typeName"] = "string[]"
+				m["zeroValue"] = "[]"
+			}
 		case descriptor.FieldDescriptorProto_TYPE_BOOL:
-			w.Pf("  get%s = () => this.%s.%s ? this.%s.%s : false\n",
-				upperCamelFieldName, messageName, lowerCamelFieldName, messageName, lowerCamelFieldName)
-		case descriptor.FieldDescriptorProto_TYPE_BYTES:
-			w.Pf("  get%s = () => this.%s.%s ? this.%s.%s : \"\"\n",
-				upperCamelFieldName, messageName, lowerCamelFieldName, messageName, lowerCamelFieldName)
+			if !repeated {
+				m["typeName"] = "boolean"
+				m["zeroValue"] = "false"
+			} else {
+				m["typeName"] = "boolean[]"
+				m["zeroValue"] = "[]"
+			}
 		case descriptor.FieldDescriptorProto_TYPE_ENUM:
-			w.Pf("  get%s = () => this.%s.%s ? this.%s.%s : 0\n",
-				upperCamelFieldName, messageName, lowerCamelFieldName, messageName, lowerCamelFieldName)
+			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
+			if !repeated {
+				m["typeName"] = t
+				m["zeroValue"] = "0"
+			} else {
+				m["typeName"] = t + "[]"
+				m["zeroValue"] = "[]"
+			}
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
-			w.Pf("  get%s = () => this.%s.%s ? this.%s.%s : %sUnmarshal({})\n",
-				upperCamelFieldName, messageName, lowerCamelFieldName, messageName, lowerCamelFieldName, t)
+			if !repeated {
+				m["typeName"] = t
+				m["zeroValue"] = fmt.Sprintf("%sUnmarshal({})", t)
+			} else {
+				m["typeName"] = t + "[]"
+				m["zeroValue"] = "[]"
+			}
 		default:
 			return fmt.Errorf("unhandled type: %v", t)
+		}
+
+		t := "  get{{.upperCamelFieldName}}: () => {{.typeName}} = () => { if (!this.{{.messageName}}) { return {{.zeroValue}} }; "
+		t += "return this.{{.messageName}}.{{.lowerCamelFieldName}} ? this.{{.messageName}}.{{.lowerCamelFieldName}} : {{.zeroValue}} }\n"
+
+		if _, err := w.T(t, m); err != nil {
+			return fmt.Errorf("get field method: %v", err)
 		}
 	}
 	w.P("}")

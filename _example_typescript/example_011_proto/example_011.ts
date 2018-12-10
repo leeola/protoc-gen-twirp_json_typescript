@@ -25,9 +25,9 @@ export function FooUnmarshal(this: any, json: any): Foo | undefined {
 }
 export class FooGetter {
   public Foo: Foo
-  constructor(o: Foo) {
+  constructor(o?: Foo) {
     this.Foo = o
   }
-  getFoo = () => this.Foo.foo ? this.Foo.foo : example_010_dot_import.FooUnmarshal({})
-  getBar = () => this.Foo.bar ? this.Foo.bar : example_010_dot_import.Foo_BarUnmarshal({})
+  getFoo: () => example_010_dot_import.Foo = () => { if (!this.Foo) { return example_010_dot_import.FooUnmarshal({}) }; return this.Foo.foo ? this.Foo.foo : example_010_dot_import.FooUnmarshal({}) }
+  getBar: () => example_010_dot_import.Foo_Bar = () => { if (!this.Foo) { return example_010_dot_import.Foo_BarUnmarshal({}) }; return this.Foo.bar ? this.Foo.bar : example_010_dot_import.Foo_BarUnmarshal({}) }
 }
