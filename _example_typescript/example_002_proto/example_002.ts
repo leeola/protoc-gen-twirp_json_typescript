@@ -29,6 +29,14 @@ export class FooGetter {
   constructor(o?: Foo) {
     this.Foo = o
   }
-  getBar001: () => example_001.Bar = () => { if (!this.Foo) { return 0 }; return this.Foo.bar001 ? this.Foo.bar001 : 0 }
-  getFoo003: () => example_003.Foo = () => { if (!this.Foo) { return 0 }; return this.Foo.foo003 ? this.Foo.foo003 : 0 }
+  getBar001: () => example_001.Bar = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.bar001) { return 0 }
+    return this.Foo.bar001
+  }
+  getFoo003: () => example_003.Foo = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.foo003) { return 0 }
+    return this.Foo.foo003
+  }
 }

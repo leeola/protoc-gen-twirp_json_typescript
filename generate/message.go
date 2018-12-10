@@ -213,52 +213,54 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 			descriptor.FieldDescriptorProto_TYPE_DOUBLE:
 			if !repeated {
 				m["typeName"] = "number"
-				m["zeroValue"] = "0"
+				m["zeroValue"] = "return 0"
 			} else {
 				m["typeName"] = "number[]"
-				m["zeroValue"] = "[]"
+				m["zeroValue"] = "return []"
 			}
 		case descriptor.FieldDescriptorProto_TYPE_STRING,
 			descriptor.FieldDescriptorProto_TYPE_BYTES:
 			if !repeated {
 				m["typeName"] = "string"
-				m["zeroValue"] = `""`
+				m["zeroValue"] = `return ""`
 			} else {
 				m["typeName"] = "string[]"
-				m["zeroValue"] = "[]"
+				m["zeroValue"] = "return []"
 			}
 		case descriptor.FieldDescriptorProto_TYPE_BOOL:
 			if !repeated {
 				m["typeName"] = "boolean"
-				m["zeroValue"] = "false"
+				m["zeroValue"] = "return false"
 			} else {
 				m["typeName"] = "boolean[]"
-				m["zeroValue"] = "[]"
+				m["zeroValue"] = "return []"
 			}
 		case descriptor.FieldDescriptorProto_TYPE_ENUM:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 			if !repeated {
 				m["typeName"] = t
-				m["zeroValue"] = "0"
+				m["zeroValue"] = "return 0"
 			} else {
 				m["typeName"] = t + "[]"
-				m["zeroValue"] = "[]"
+				m["zeroValue"] = "return []"
 			}
 		case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 			if !repeated {
 				m["typeName"] = t
-				m["zeroValue"] = fmt.Sprintf("%sUnmarshal({})", t)
+				m["zeroValue"] = fmt.Sprintf("const nonZero = %sUnmarshal({}); if (!nonZero) { throw new Error(\"nonzero returned zero value\") }; return nonZero", t)
 			} else {
 				m["typeName"] = t + "[]"
-				m["zeroValue"] = "[]"
+				m["zeroValue"] = "return []"
 			}
 		default:
 			return fmt.Errorf("unhandled type: %v", t)
 		}
 
-		t := "  get{{.upperCamelFieldName}}: () => {{.typeName}} = () => { if (!this.{{.messageName}}) { return {{.zeroValue}} }; "
-		t += "return this.{{.messageName}}.{{.lowerCamelFieldName}} ? this.{{.messageName}}.{{.lowerCamelFieldName}} : {{.zeroValue}} }\n"
+		t := "  get{{.upperCamelFieldName}}: () => {{.typeName}} = () => {\n"
+		t += "    if (!this.{{.messageName}}) { {{.zeroValue}} }\n"
+		t += "    if (!this.{{.messageName}}.{{.lowerCamelFieldName}}) { {{.zeroValue}} }\n"
+		t += "    return this.{{.messageName}}.{{.lowerCamelFieldName}}\n  }\n"
 
 		if _, err := w.T(t, m); err != nil {
 			return fmt.Errorf("get field method: %v", err)

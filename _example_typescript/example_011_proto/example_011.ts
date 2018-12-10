@@ -28,6 +28,14 @@ export class FooGetter {
   constructor(o?: Foo) {
     this.Foo = o
   }
-  getFoo: () => example_010_dot_import.Foo = () => { if (!this.Foo) { return example_010_dot_import.FooUnmarshal({}) }; return this.Foo.foo ? this.Foo.foo : example_010_dot_import.FooUnmarshal({}) }
-  getBar: () => example_010_dot_import.Foo_Bar = () => { if (!this.Foo) { return example_010_dot_import.Foo_BarUnmarshal({}) }; return this.Foo.bar ? this.Foo.bar : example_010_dot_import.Foo_BarUnmarshal({}) }
+  getFoo: () => example_010_dot_import.Foo = () => {
+    if (!this.Foo) { const nonZero = example_010_dot_import.FooUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    if (!this.Foo.foo) { const nonZero = example_010_dot_import.FooUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    return this.Foo.foo
+  }
+  getBar: () => example_010_dot_import.Foo_Bar = () => {
+    if (!this.Foo) { const nonZero = example_010_dot_import.Foo_BarUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    if (!this.Foo.bar) { const nonZero = example_010_dot_import.Foo_BarUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    return this.Foo.bar
+  }
 }

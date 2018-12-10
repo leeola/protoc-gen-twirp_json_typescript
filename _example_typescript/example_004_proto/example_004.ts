@@ -69,8 +69,16 @@ export class FooRequestGetter {
   constructor(o?: FooRequest) {
     this.FooRequest = o
   }
-  getFoo: () => string = () => { if (!this.FooRequest) { return "" }; return this.FooRequest.foo ? this.FooRequest.foo : "" }
-  getBar: () => Bar = () => { if (!this.FooRequest) { return BarUnmarshal({}) }; return this.FooRequest.bar ? this.FooRequest.bar : BarUnmarshal({}) }
+  getFoo: () => string = () => {
+    if (!this.FooRequest) { return "" }
+    if (!this.FooRequest.foo) { return "" }
+    return this.FooRequest.foo
+  }
+  getBar: () => Bar = () => {
+    if (!this.FooRequest) { const nonZero = BarUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    if (!this.FooRequest.bar) { const nonZero = BarUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    return this.FooRequest.bar
+  }
 }
 
 export function FooResponseMarshal(t?: FooResponse): object | undefined {
@@ -90,7 +98,11 @@ export class FooResponseGetter {
   constructor(o?: FooResponse) {
     this.FooResponse = o
   }
-  getFoo: () => string = () => { if (!this.FooResponse) { return "" }; return this.FooResponse.foo ? this.FooResponse.foo : "" }
+  getFoo: () => string = () => {
+    if (!this.FooResponse) { return "" }
+    if (!this.FooResponse.foo) { return "" }
+    return this.FooResponse.foo
+  }
 }
 
 export function BarMarshal(t?: Bar): object | undefined {
@@ -110,5 +122,9 @@ export class BarGetter {
   constructor(o?: Bar) {
     this.Bar = o
   }
-  getBar: () => string = () => { if (!this.Bar) { return "" }; return this.Bar.bar ? this.Bar.bar : "" }
+  getBar: () => string = () => {
+    if (!this.Bar) { return "" }
+    if (!this.Bar.bar) { return "" }
+    return this.Bar.bar
+  }
 }

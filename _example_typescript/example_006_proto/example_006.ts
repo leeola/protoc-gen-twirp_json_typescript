@@ -79,6 +79,14 @@ export class BarGetter {
   constructor(o?: Bar) {
     this.Bar = o
   }
-  getFoo: () => string = () => { if (!this.Bar) { return "" }; return this.Bar.foo ? this.Bar.foo : "" }
-  getBarBaz: () => string = () => { if (!this.Bar) { return "" }; return this.Bar.barBaz ? this.Bar.barBaz : "" }
+  getFoo: () => string = () => {
+    if (!this.Bar) { return "" }
+    if (!this.Bar.foo) { return "" }
+    return this.Bar.foo
+  }
+  getBarBaz: () => string = () => {
+    if (!this.Bar) { return "" }
+    if (!this.Bar.barBaz) { return "" }
+    return this.Bar.barBaz
+  }
 }

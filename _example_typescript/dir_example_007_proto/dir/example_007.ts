@@ -35,8 +35,24 @@ export class FooGetter {
   constructor(o?: Foo) {
     this.Foo = o
   }
-  getFoo: () => string = () => { if (!this.Foo) { return "" }; return this.Foo.foo ? this.Foo.foo : "" }
-  getBar: () => example_001.Bar = () => { if (!this.Foo) { return 0 }; return this.Foo.bar ? this.Foo.bar : 0 }
-  getBaz: () => example_008.Foo = () => { if (!this.Foo) { return 0 }; return this.Foo.baz ? this.Foo.baz : 0 }
-  getBang: () => example_001.Foo = () => { if (!this.Foo) { return example_001.FooUnmarshal({}) }; return this.Foo.bang ? this.Foo.bang : example_001.FooUnmarshal({}) }
+  getFoo: () => string = () => {
+    if (!this.Foo) { return "" }
+    if (!this.Foo.foo) { return "" }
+    return this.Foo.foo
+  }
+  getBar: () => example_001.Bar = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.bar) { return 0 }
+    return this.Foo.bar
+  }
+  getBaz: () => example_008.Foo = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.baz) { return 0 }
+    return this.Foo.baz
+  }
+  getBang: () => example_001.Foo = () => {
+    if (!this.Foo) { const nonZero = example_001.FooUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    if (!this.Foo.bang) { const nonZero = example_001.FooUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    return this.Foo.bang
+  }
 }

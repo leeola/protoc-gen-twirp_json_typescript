@@ -131,40 +131,176 @@ export class FooGetter {
   constructor(o?: Foo) {
     this.Foo = o
   }
-  getFooInt32: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooInt32 ? this.Foo.fooInt32 : 0 }
-  getFooInt64: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooInt64 ? this.Foo.fooInt64 : 0 }
-  getFooUint32: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooUint32 ? this.Foo.fooUint32 : 0 }
-  getFooUint64: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooUint64 ? this.Foo.fooUint64 : 0 }
-  getFooSint32: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooSint32 ? this.Foo.fooSint32 : 0 }
-  getFooSint64: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooSint64 ? this.Foo.fooSint64 : 0 }
-  getFooFixed32: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooFixed32 ? this.Foo.fooFixed32 : 0 }
-  getFooFixed64: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooFixed64 ? this.Foo.fooFixed64 : 0 }
-  getFooSfixed32: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooSfixed32 ? this.Foo.fooSfixed32 : 0 }
-  getFooSfixed64: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooSfixed64 ? this.Foo.fooSfixed64 : 0 }
-  getFooFloat: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooFloat ? this.Foo.fooFloat : 0 }
-  getFooDouble: () => number = () => { if (!this.Foo) { return 0 }; return this.Foo.fooDouble ? this.Foo.fooDouble : 0 }
-  getFooString: () => string = () => { if (!this.Foo) { return "" }; return this.Foo.fooString ? this.Foo.fooString : "" }
-  getFooBool: () => boolean = () => { if (!this.Foo) { return false }; return this.Foo.fooBool ? this.Foo.fooBool : false }
-  getFooBytes: () => string = () => { if (!this.Foo) { return "" }; return this.Foo.fooBytes ? this.Foo.fooBytes : "" }
-  getBar: () => Bar = () => { if (!this.Foo) { return 0 }; return this.Foo.bar ? this.Foo.bar : 0 }
-  getBaz: () => Baz = () => { if (!this.Foo) { return BazUnmarshal({}) }; return this.Foo.baz ? this.Foo.baz : BazUnmarshal({}) }
-  getFooInt32S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooInt32S ? this.Foo.fooInt32S : [] }
-  getFooInt64S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooInt64S ? this.Foo.fooInt64S : [] }
-  getFooUint32S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooUint32S ? this.Foo.fooUint32S : [] }
-  getFooUint64S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooUint64S ? this.Foo.fooUint64S : [] }
-  getFooSint32S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooSint32S ? this.Foo.fooSint32S : [] }
-  getFooSint64S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooSint64S ? this.Foo.fooSint64S : [] }
-  getFooFixed32S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooFixed32S ? this.Foo.fooFixed32S : [] }
-  getFooFixed64S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooFixed64S ? this.Foo.fooFixed64S : [] }
-  getFooSfixed32S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooSfixed32S ? this.Foo.fooSfixed32S : [] }
-  getFooSfixed64S: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooSfixed64S ? this.Foo.fooSfixed64S : [] }
-  getFooFloats: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooFloats ? this.Foo.fooFloats : [] }
-  getFooDoubles: () => number[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooDoubles ? this.Foo.fooDoubles : [] }
-  getFooStrings: () => string[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooStrings ? this.Foo.fooStrings : [] }
-  getFooBools: () => boolean[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooBools ? this.Foo.fooBools : [] }
-  getFooBytess: () => string[] = () => { if (!this.Foo) { return [] }; return this.Foo.fooBytess ? this.Foo.fooBytess : [] }
-  getBars: () => Bar[] = () => { if (!this.Foo) { return [] }; return this.Foo.bars ? this.Foo.bars : [] }
-  getBazs: () => Baz[] = () => { if (!this.Foo) { return [] }; return this.Foo.bazs ? this.Foo.bazs : [] }
+  getFooInt32: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooInt32) { return 0 }
+    return this.Foo.fooInt32
+  }
+  getFooInt64: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooInt64) { return 0 }
+    return this.Foo.fooInt64
+  }
+  getFooUint32: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooUint32) { return 0 }
+    return this.Foo.fooUint32
+  }
+  getFooUint64: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooUint64) { return 0 }
+    return this.Foo.fooUint64
+  }
+  getFooSint32: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooSint32) { return 0 }
+    return this.Foo.fooSint32
+  }
+  getFooSint64: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooSint64) { return 0 }
+    return this.Foo.fooSint64
+  }
+  getFooFixed32: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooFixed32) { return 0 }
+    return this.Foo.fooFixed32
+  }
+  getFooFixed64: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooFixed64) { return 0 }
+    return this.Foo.fooFixed64
+  }
+  getFooSfixed32: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooSfixed32) { return 0 }
+    return this.Foo.fooSfixed32
+  }
+  getFooSfixed64: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooSfixed64) { return 0 }
+    return this.Foo.fooSfixed64
+  }
+  getFooFloat: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooFloat) { return 0 }
+    return this.Foo.fooFloat
+  }
+  getFooDouble: () => number = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.fooDouble) { return 0 }
+    return this.Foo.fooDouble
+  }
+  getFooString: () => string = () => {
+    if (!this.Foo) { return "" }
+    if (!this.Foo.fooString) { return "" }
+    return this.Foo.fooString
+  }
+  getFooBool: () => boolean = () => {
+    if (!this.Foo) { return false }
+    if (!this.Foo.fooBool) { return false }
+    return this.Foo.fooBool
+  }
+  getFooBytes: () => string = () => {
+    if (!this.Foo) { return "" }
+    if (!this.Foo.fooBytes) { return "" }
+    return this.Foo.fooBytes
+  }
+  getBar: () => Bar = () => {
+    if (!this.Foo) { return 0 }
+    if (!this.Foo.bar) { return 0 }
+    return this.Foo.bar
+  }
+  getBaz: () => Baz = () => {
+    if (!this.Foo) { const nonZero = BazUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    if (!this.Foo.baz) { const nonZero = BazUnmarshal({}); if (!nonZero) { throw new Error("nonzero returned zero value") }; return nonZero }
+    return this.Foo.baz
+  }
+  getFooInt32S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooInt32S) { return [] }
+    return this.Foo.fooInt32S
+  }
+  getFooInt64S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooInt64S) { return [] }
+    return this.Foo.fooInt64S
+  }
+  getFooUint32S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooUint32S) { return [] }
+    return this.Foo.fooUint32S
+  }
+  getFooUint64S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooUint64S) { return [] }
+    return this.Foo.fooUint64S
+  }
+  getFooSint32S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooSint32S) { return [] }
+    return this.Foo.fooSint32S
+  }
+  getFooSint64S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooSint64S) { return [] }
+    return this.Foo.fooSint64S
+  }
+  getFooFixed32S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooFixed32S) { return [] }
+    return this.Foo.fooFixed32S
+  }
+  getFooFixed64S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooFixed64S) { return [] }
+    return this.Foo.fooFixed64S
+  }
+  getFooSfixed32S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooSfixed32S) { return [] }
+    return this.Foo.fooSfixed32S
+  }
+  getFooSfixed64S: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooSfixed64S) { return [] }
+    return this.Foo.fooSfixed64S
+  }
+  getFooFloats: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooFloats) { return [] }
+    return this.Foo.fooFloats
+  }
+  getFooDoubles: () => number[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooDoubles) { return [] }
+    return this.Foo.fooDoubles
+  }
+  getFooStrings: () => string[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooStrings) { return [] }
+    return this.Foo.fooStrings
+  }
+  getFooBools: () => boolean[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooBools) { return [] }
+    return this.Foo.fooBools
+  }
+  getFooBytess: () => string[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.fooBytess) { return [] }
+    return this.Foo.fooBytess
+  }
+  getBars: () => Bar[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.bars) { return [] }
+    return this.Foo.bars
+  }
+  getBazs: () => Baz[] = () => {
+    if (!this.Foo) { return [] }
+    if (!this.Foo.bazs) { return [] }
+    return this.Foo.bazs
+  }
 }
 
 export function BazMarshal(t?: Baz): object | undefined {
@@ -184,5 +320,9 @@ export class BazGetter {
   constructor(o?: Baz) {
     this.Baz = o
   }
-  getBaz: () => string = () => { if (!this.Baz) { return "" }; return this.Baz.baz ? this.Baz.baz : "" }
+  getBaz: () => string = () => {
+    if (!this.Baz) { return "" }
+    if (!this.Baz.baz) { return "" }
+    return this.Baz.baz
+  }
 }

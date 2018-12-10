@@ -79,9 +79,21 @@ export class HatGetter {
   constructor(o?: Hat) {
     this.Hat = o
   }
-  getSize: () => number = () => { if (!this.Hat) { return 0 }; return this.Hat.size ? this.Hat.size : 0 }
-  getColor: () => string = () => { if (!this.Hat) { return "" }; return this.Hat.color ? this.Hat.color : "" }
-  getName: () => string = () => { if (!this.Hat) { return "" }; return this.Hat.name ? this.Hat.name : "" }
+  getSize: () => number = () => {
+    if (!this.Hat) { return 0 }
+    if (!this.Hat.size) { return 0 }
+    return this.Hat.size
+  }
+  getColor: () => string = () => {
+    if (!this.Hat) { return "" }
+    if (!this.Hat.color) { return "" }
+    return this.Hat.color
+  }
+  getName: () => string = () => {
+    if (!this.Hat) { return "" }
+    if (!this.Hat.name) { return "" }
+    return this.Hat.name
+  }
 }
 
 export function SizeMarshal(t?: Size): object | undefined {
@@ -101,5 +113,9 @@ export class SizeGetter {
   constructor(o?: Size) {
     this.Size = o
   }
-  getInches: () => number = () => { if (!this.Size) { return 0 }; return this.Size.inches ? this.Size.inches : 0 }
+  getInches: () => number = () => {
+    if (!this.Size) { return 0 }
+    if (!this.Size.inches) { return 0 }
+    return this.Size.inches
+  }
 }
