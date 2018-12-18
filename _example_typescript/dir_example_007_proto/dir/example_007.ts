@@ -16,8 +16,8 @@ export function FooMarshal(t?: Foo): object | undefined {
   if (!t) { return undefined }
   return {
     foo: t.foo,
-    bar: t.bar ? example_001.Bar[t.bar] : undefined,
-    baz: t.baz ? example_008.Foo[t.baz] : undefined,
+    bar: t.bar ? example_001.BarMarshal(t.bar) : undefined,
+    baz: t.baz ? example_008.FooMarshal(t.baz) : undefined,
     bang: example_001.FooMarshal(t.bang),
   }
 }
@@ -41,13 +41,13 @@ export class FooGetter {
     return this.Foo.foo
   }
   getBar: () => example_001.Bar = () => {
-    if (!this.Foo) { return example_001.Bar[example_001.Bar[0]] }
-    if (!this.Foo.bar) { return example_001.Bar[example_001.Bar[0]] }
+    if (!this.Foo) { return example_001.BarMap(0) }
+    if (!this.Foo.bar) { return example_001.BarMap(0) }
     return this.Foo.bar
   }
   getBaz: () => example_008.Foo = () => {
-    if (!this.Foo) { return example_008.Foo[example_008.Foo[0]] }
-    if (!this.Foo.baz) { return example_008.Foo[example_008.Foo[0]] }
+    if (!this.Foo) { return example_008.FooMap(0) }
+    if (!this.Foo.baz) { return example_008.FooMap(0) }
     return this.Foo.baz
   }
   getBang: () => example_001.Foo = () => {

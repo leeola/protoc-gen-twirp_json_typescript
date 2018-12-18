@@ -48,6 +48,29 @@ export interface Baz {
   baz?: string
 }
 
+export function BarMap(n: number): Bar {
+  switch(n) {
+  case 0:
+    return Bar.UNKNOWN
+  case 1:
+    return Bar.BAR_FOO
+  default:
+    return Bar.UNKNOWN
+  }
+}
+
+export function BarMarshal(e?: Bar): number | undefined {
+  if (!e) { return undefined }
+  switch(e) {
+  case Bar.UNKNOWN:
+    return 0
+  case Bar.BAR_FOO:
+    return 1
+  default:
+    return 0
+  }
+}
+
 export function FooMarshal(t?: Foo): object | undefined {
   if (!t) { return undefined }
   return {
@@ -66,7 +89,7 @@ export function FooMarshal(t?: Foo): object | undefined {
     foo_string: t.fooString,
     foo_bool: t.fooBool,
     foo_bytes: t.fooBytes,
-    bar: t.bar ? Bar[t.bar] : undefined,
+    bar: t.bar ? BarMarshal(t.bar) : undefined,
     baz: BazMarshal(t.baz),
     foo_int32s: t.fooInt32S,
     foo_int64s: t.fooInt64S,
@@ -83,7 +106,7 @@ export function FooMarshal(t?: Foo): object | undefined {
     foo_strings: t.fooStrings,
     foo_bools: t.fooBools,
     foo_bytess: t.fooBytess,
-    bars: t.bars ? t.bars.map((elm) => Bar[elm]) : undefined,
+    bars: t.bars ? t.bars.map((elm) => BarMarshal(elm)) : undefined,
     bazs: t.bazs ? t.bazs.map((elm) => BazMarshal(elm)) : undefined,
   }
 }
@@ -207,8 +230,8 @@ export class FooGetter {
     return this.Foo.fooBytes
   }
   getBar: () => Bar = () => {
-    if (!this.Foo) { return Bar[Bar[0]] }
-    if (!this.Foo.bar) { return Bar[Bar[0]] }
+    if (!this.Foo) { return BarMap(0) }
+    if (!this.Foo.bar) { return BarMap(0) }
     return this.Foo.bar
   }
   getBaz: () => Baz = () => {

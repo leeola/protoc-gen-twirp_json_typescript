@@ -33,6 +33,14 @@ func Message(w *Writer, file *descriptor.FileDescriptorProto, parentType string,
 		if err := Enum(w, file, t.Type, nested, types); err != nil {
 			return fmt.Errorf("Enum: %v", err)
 		}
+
+		if err := EnumMap(w, file, t.Type, nested, types); err != nil {
+			return fmt.Errorf("EnumMap: %v", err)
+		}
+
+		if err := EnumMarshal(w, file, t.Type, nested, types); err != nil {
+			return fmt.Errorf("EnumMarshal: %v", err)
+		}
 	}
 
 	for i, nested := range m.GetNestedType() {
@@ -139,9 +147,9 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 		case descriptor.FieldDescriptorProto_TYPE_ENUM:
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 			if !repeated {
-				w.Pf("    %s: t.%s ? %s[t.%s] : undefined,\n", jsonName, fieldName, t, fieldName)
+				w.Pf("    %s: t.%s ? %sMarshal(t.%s) : undefined,\n", jsonName, fieldName, t, fieldName)
 			} else {
-				listMap := fmt.Sprintf("t.%s.map((elm) => %s[elm])", fieldName, t)
+				listMap := fmt.Sprintf("t.%s.map((elm) => %sMarshal(elm))", fieldName, t)
 				nullsafe := fmt.Sprintf("t.%s ? %s : undefined", fieldName, listMap)
 				w.Pf("    %s: %s,\n", jsonName, nullsafe)
 			}
@@ -248,7 +256,7 @@ func MessageMarshal(w *Writer, file *descriptor.FileDescriptorProto, prefix stri
 			t := types.SetField(packageName, f.GetTypeName()).TypeName(packageName)
 			if !repeated {
 				m["typeName"] = t
-				m["zeroValue"] = fmt.Sprintf("return %s[%s[0]]", t, t)
+				m["zeroValue"] = fmt.Sprintf("return %sMap(0)", t)
 			} else {
 				m["typeName"] = t + "[]"
 				m["zeroValue"] = "return []"

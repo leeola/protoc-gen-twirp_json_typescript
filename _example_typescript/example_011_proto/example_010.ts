@@ -7,6 +7,29 @@ export enum Foo_Baz {
   BAZ = "BAZ",
 }
 
+export function Foo_BazMap(n: number): Foo_Baz {
+  switch(n) {
+  case 0:
+    return Foo_Baz.UNKNOWN
+  case 1:
+    return Foo_Baz.BAZ
+  default:
+    return Foo_Baz.UNKNOWN
+  }
+}
+
+export function Foo_BazMarshal(e?: Foo_Baz): number | undefined {
+  if (!e) { return undefined }
+  switch(e) {
+  case Foo_Baz.UNKNOWN:
+    return 0
+  case Foo_Baz.BAZ:
+    return 1
+  default:
+    return 0
+  }
+}
+
 export interface Foo_Bar {
   bar?: string
 }
@@ -48,7 +71,7 @@ export function FooMarshal(t?: Foo): object | undefined {
   return {
     foo: t.foo,
     bar: Foo_BarMarshal(t.bar),
-    baz: t.baz ? Foo_Baz[t.baz] : undefined,
+    baz: t.baz ? Foo_BazMarshal(t.baz) : undefined,
   }
 }
 export function FooUnmarshal(this: any, json: any): Foo | undefined {
@@ -75,8 +98,8 @@ export class FooGetter {
     return this.Foo.bar
   }
   getBaz: () => Foo_Baz = () => {
-    if (!this.Foo) { return Foo_Baz[Foo_Baz[0]] }
-    if (!this.Foo.baz) { return Foo_Baz[Foo_Baz[0]] }
+    if (!this.Foo) { return Foo_BazMap(0) }
+    if (!this.Foo.baz) { return Foo_BazMap(0) }
     return this.Foo.baz
   }
 }

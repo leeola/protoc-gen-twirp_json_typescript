@@ -13,8 +13,8 @@ export interface Foo {
 export function FooMarshal(t?: Foo): object | undefined {
   if (!t) { return undefined }
   return {
-    bar_001: t.bar001 ? example_001.Bar[t.bar001] : undefined,
-    foo_003: t.foo003 ? example_003.Foo[t.foo003] : undefined,
+    bar_001: t.bar001 ? example_001.BarMarshal(t.bar001) : undefined,
+    foo_003: t.foo003 ? example_003.FooMarshal(t.foo003) : undefined,
   }
 }
 export function FooUnmarshal(this: any, json: any): Foo | undefined {
@@ -30,13 +30,13 @@ export class FooGetter {
     this.Foo = o
   }
   getBar001: () => example_001.Bar = () => {
-    if (!this.Foo) { return example_001.Bar[example_001.Bar[0]] }
-    if (!this.Foo.bar001) { return example_001.Bar[example_001.Bar[0]] }
+    if (!this.Foo) { return example_001.BarMap(0) }
+    if (!this.Foo.bar001) { return example_001.BarMap(0) }
     return this.Foo.bar001
   }
   getFoo003: () => example_003.Foo = () => {
-    if (!this.Foo) { return example_003.Foo[example_003.Foo[0]] }
-    if (!this.Foo.foo003) { return example_003.Foo[example_003.Foo[0]] }
+    if (!this.Foo) { return example_003.FooMap(0) }
+    if (!this.Foo.foo003) { return example_003.FooMap(0) }
     return this.Foo.foo003
   }
 }

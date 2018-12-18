@@ -60,6 +60,20 @@ func File(w *Writer, f *descriptor.FileDescriptorProto, types Types, pkgs map[st
 		}
 	}
 
+	// generate enum maps for number -> enum
+	for _, e := range f.GetEnumType() {
+		if err := EnumMap(w, f, "", e, types); err != nil {
+			return fmt.Errorf("EnumMap: %v", err)
+		}
+	}
+
+	// generate enum marshals for enum -> json
+	for _, e := range f.GetEnumType() {
+		if err := EnumMarshal(w, f, "", e, types); err != nil {
+			return fmt.Errorf("EnumMap: %v", err)
+		}
+	}
+
 	// generate json -> interface map funcs
 	for _, m := range f.GetMessageType() {
 		if err := MessageMarshal(w, f, "", m, types); err != nil {
